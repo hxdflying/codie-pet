@@ -34,12 +34,12 @@ def load_label_font(size: int = 16) -> ImageFont.ImageFont:
 
 STATES = ("idle", "peek", "loading", "coding", "error", "done")
 STATE_META = {
-    "idle": ("Idle", "General chat, thinking, lightweight answers"),
-    "peek": ("Peek", "Reading files, inspecting context, checking previews"),
-    "loading": ("Loading", "Running commands, waiting, long tasks"),
-    "coding": ("Coding", "Writing code, editing files, generating assets"),
-    "error": ("Error", "Failed commands, failed tests, blocked work"),
-    "done": ("Done", "Successful final results"),
+    "idle": ("Idle", "General chat, thinking, lightweight answers", 280),
+    "peek": ("Peek", "Reading files, inspecting context, checking previews", 220),
+    "loading": ("Loading", "Running commands, waiting, long tasks", 130),
+    "coding": ("Coding", "Writing code, editing files, generating assets", 180),
+    "error": ("Error", "Failed commands, failed tests, blocked work", 260),
+    "done": ("Done", "Successful final results", 240),
 }
 
 
@@ -56,7 +56,12 @@ class Paths:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build CodiePet GIF pack from six four-frame strips.")
     parser.add_argument("--workspace", default=".", help="Workspace root. Default: current directory.")
-    parser.add_argument("--frame-duration", type=int, default=180, help="GIF frame duration in milliseconds.")
+    parser.add_argument(
+        "--frame-duration",
+        type=int,
+        default=None,
+        help="Override the per-state defaults; applies one duration (ms) to every GIF.",
+    )
     return parser.parse_args()
 
 
@@ -133,14 +138,15 @@ def build_gif(frame_paths: list[Path], gif_path: Path, duration: int) -> None:
     )
 
 
-def write_config(paths: Paths) -> None:
+def write_config(paths: Paths, durations: dict[str, int]) -> None:
     states = {}
     for state in STATES:
-        label, use_when = STATE_META[state]
+        label, use_when, _ = STATE_META[state]
         states[state] = {
             "label": label,
             "gif": f"./gifs/{state}.gif",
             "useWhen": use_when,
+            "frameDurationMs": durations[state],
         }
     config = {
         "version": 1,
@@ -228,11 +234,16 @@ def main() -> None:
     for directory in (paths.frames, paths.gifs, paths.previews):
         directory.mkdir(parents=True, exist_ok=True)
 
+    durations = {
+        state: args.frame_duration if args.frame_duration is not None else STATE_META[state][2]
+        for state in STATES
+    }
+
     for state in STATES:
         frame_paths = slice_strip(paths.strips / f"{state}.png", paths.frames / state)
-        build_gif(frame_paths, paths.gifs / f"{state}.gif", args.frame_duration)
+        build_gif(frame_paths, paths.gifs / f"{state}.gif", durations[state])
 
-    write_config(paths)
+    write_config(paths, durations)
     render_contact_sheet(paths)
     write_preview_html(paths)
     print(f"Built CodiePet pack at {paths.root}")

@@ -74,3 +74,31 @@ def test_unopenable_strip_fails_with_clear_message(
 
     assert result.returncode == 2
     assert "Cannot open strip idle.png" in result.stderr
+
+
+def test_states_record_per_state_frame_duration(
+    strip_workspace: Path, run_script
+) -> None:
+    result = run_script("build", strip_workspace)
+    assert result.returncode == 0, result.stderr
+    config = json.loads(
+        (strip_workspace / "codie-pet" / "avatar.config.json").read_text()
+    )
+    durations = {s: config["states"][s]["frameDurationMs"] for s in config["states"]}
+    for state, value in durations.items():
+        assert isinstance(value, int) and value > 0, state
+    # Loading should be the fastest beat in the default mapping.
+    assert durations["loading"] < durations["idle"]
+    assert durations["loading"] < durations["done"]
+
+
+def test_frame_duration_override_applies_to_all_states(
+    strip_workspace: Path, run_script
+) -> None:
+    result = run_script("build", strip_workspace, "--frame-duration", "100")
+    assert result.returncode == 0, result.stderr
+    config = json.loads(
+        (strip_workspace / "codie-pet" / "avatar.config.json").read_text()
+    )
+    for state in config["states"]:
+        assert config["states"][state]["frameDurationMs"] == 100
