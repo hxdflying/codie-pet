@@ -8,9 +8,28 @@ from dataclasses import dataclass
 from pathlib import Path
 
 try:
-    from PIL import Image, ImageDraw
+    from PIL import Image, ImageDraw, ImageFont
 except ImportError as exc:
     raise SystemExit("Pillow is required. Install it with `python3 -m pip install Pillow`.") from exc
+
+
+LABEL_FONT_CANDIDATES = (
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+    "C:\\Windows\\Fonts\\arialbd.ttf",
+)
+
+
+def load_label_font(size: int = 16) -> ImageFont.ImageFont:
+    for path in LABEL_FONT_CANDIDATES:
+        try:
+            return ImageFont.truetype(path, size)
+        except OSError:
+            continue
+    try:
+        return ImageFont.load_default(size=size)
+    except TypeError:
+        return ImageFont.load_default()
 
 
 STATES = ("idle", "peek", "loading", "coding", "error", "done")
@@ -148,13 +167,22 @@ def render_contact_sheet(paths: Paths) -> None:
     height = rows * (cell_h + label_h) + (rows + 1) * gap
     sheet = Image.new("RGBA", (width, height), "white")
     draw = ImageDraw.Draw(sheet)
+    font = load_label_font(16)
 
     for index, (state, image) in enumerate(gif_cells):
         row = index // columns
         col = index % columns
         x = gap + col * (cell_w + gap)
         y = gap + row * (cell_h + label_h + gap)
-        draw.text((x, y), state, fill="black")
+        bbox = draw.textbbox((0, 0), state, font=font)
+        text_w = bbox[2] - bbox[0]
+        text_h = bbox[3] - bbox[1]
+        draw.text(
+            (x + (cell_w - text_w) // 2, y + (label_h - text_h) // 2 - bbox[1]),
+            state,
+            fill="black",
+            font=font,
+        )
         sheet.alpha_composite(image, (x + (cell_w - image.width) // 2, y + label_h))
 
     paths.previews.mkdir(parents=True, exist_ok=True)
