@@ -1,28 +1,15 @@
 from __future__ import annotations
 
-import subprocess
-import sys
 from pathlib import Path
 
 
-INSTALL = Path("plugins/codie-pet/scripts/install_avatar_rules.py")
-UNINSTALL = Path("plugins/codie-pet/scripts/uninstall_avatar_rules.py")
-
-
-def run_script(script: Path, workspace: Path) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        [sys.executable, str(script), "--workspace", str(workspace)],
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-
-
-def test_install_creates_agents_file_with_managed_block(tmp_path: Path) -> None:
+def test_install_creates_agents_file_with_managed_block(
+    tmp_path: Path, run_script
+) -> None:
     workspace = tmp_path / "workspace"
     workspace.mkdir()
 
-    result = run_script(INSTALL, workspace)
+    result = run_script("install", workspace)
 
     assert result.returncode == 0, result.stderr
     content = (workspace / "AGENTS.md").read_text()
@@ -31,7 +18,9 @@ def test_install_creates_agents_file_with_managed_block(tmp_path: Path) -> None:
     assert "./codie-pet/gifs/" in content
 
 
-def test_install_preserves_unrelated_content_and_replaces_existing_block(tmp_path: Path) -> None:
+def test_install_preserves_unrelated_content_and_replaces_existing_block(
+    tmp_path: Path, run_script
+) -> None:
     workspace = tmp_path / "workspace"
     workspace.mkdir()
     agents = workspace / "AGENTS.md"
@@ -41,7 +30,7 @@ def test_install_preserves_unrelated_content_and_replaces_existing_block(tmp_pat
         "Keep this too.\n"
     )
 
-    result = run_script(INSTALL, workspace)
+    result = run_script("install", workspace)
 
     assert result.returncode == 0, result.stderr
     content = agents.read_text()
@@ -52,15 +41,19 @@ def test_install_preserves_unrelated_content_and_replaces_existing_block(tmp_pat
     assert content.count("<!-- codie-pet:end -->") == 1
 
 
-def test_uninstall_removes_only_managed_block(tmp_path: Path) -> None:
+def test_uninstall_removes_only_managed_block(
+    tmp_path: Path, run_script
+) -> None:
     workspace = tmp_path / "workspace"
     workspace.mkdir()
-    install = run_script(INSTALL, workspace)
+    install = run_script("install", workspace)
     assert install.returncode == 0, install.stderr
     agents = workspace / "AGENTS.md"
-    agents.write_text("# Project Rules\n\nKeep this.\n\n" + agents.read_text() + "\nKeep this too.\n")
+    agents.write_text(
+        "# Project Rules\n\nKeep this.\n\n" + agents.read_text() + "\nKeep this too.\n"
+    )
 
-    result = run_script(UNINSTALL, workspace)
+    result = run_script("uninstall", workspace)
 
     assert result.returncode == 0, result.stderr
     content = agents.read_text()
