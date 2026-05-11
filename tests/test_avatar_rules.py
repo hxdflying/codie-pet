@@ -78,6 +78,21 @@ def test_uninstall_is_noop_when_no_managed_block_present(
     assert agents.read_text() == original
 
 
+def test_uninstall_preserves_exact_content_when_no_managed_block_present(
+    tmp_path: Path, run_script
+) -> None:
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    agents = workspace / "AGENTS.md"
+    original = "\n\n# Project Rules\n\nKeep this.\n\n"
+    agents.write_text(original)
+
+    result = run_script("uninstall", workspace)
+
+    assert result.returncode == 0, result.stderr
+    assert agents.read_text() == original
+
+
 def test_uninstall_is_silent_when_agents_file_missing(
     tmp_path: Path, run_script
 ) -> None:

@@ -6,7 +6,7 @@ Accept the source image only when it appears to contain one clear human subject.
 
 ## Character preview checks
 
-The preview passes when it is one full-body Q-style character, keeps the source person's recognizable traits, has a white or transparent background, and has no labels or scenery.
+The preview passes when it is one full-body Q-style character, keeps the source person's recognizable traits, uses a white background, and has no labels or scenery.
 
 ## State strip checks
 

@@ -11,7 +11,7 @@ Use this skill to guide a user through creating a local Q-style avatar pack for 
 
 v0.1 supports one clear single-person human photo. It does not support multi-person photos, pets, objects, scenery, logos, or direct Codex desktop UI modification.
 
-The plugin stores generated assets locally in the current workspace. It does not upload to a cloud service.
+The plugin stores generated assets locally in the current workspace. The plugin scripts do not add an extra upload step, but Codex image generation may still use a cloud-hosted model.
 
 ## Required workflow
 

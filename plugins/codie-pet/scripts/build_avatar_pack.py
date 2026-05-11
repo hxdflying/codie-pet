@@ -108,8 +108,12 @@ def slice_strip(strip_path: Path, out_dir: Path) -> list[Path]:
         )
         image = image.crop((0, 0, trimmed_width, image.height))
 
-    frame_width = image.width // 4
     out_dir.mkdir(parents=True, exist_ok=True)
+    for stale_frame in out_dir.glob("frame-*.png"):
+        if stale_frame.is_file() or stale_frame.is_symlink():
+            stale_frame.unlink()
+
+    frame_width = image.width // 4
     frame_paths: list[Path] = []
     for index in range(4):
         left = index * frame_width
@@ -136,6 +140,28 @@ def build_gif(frame_paths: list[Path], gif_path: Path, duration: int) -> None:
         loop=0,
         optimize=True,
     )
+
+
+def normalize_frames(frame_paths: list[Path], canvas_size: tuple[int, int]) -> None:
+    canvas_w, canvas_h = canvas_size
+    for path in frame_paths:
+        rgba = Image.open(path).convert("RGBA")
+        if rgba.width > canvas_w or rgba.height > canvas_h:
+            fail(f"Frame {path} is larger than the target canvas")
+        background = Image.new("RGBA", canvas_size, (255, 255, 255, 255))
+        x = (canvas_w - rgba.width) // 2
+        y = (canvas_h - rgba.height) // 2
+        background.paste(rgba, (x, y), mask=rgba.split()[3])
+        background.save(path)
+
+
+def target_canvas_size(all_frame_paths: dict[str, list[Path]]) -> tuple[int, int]:
+    sizes = []
+    for frame_paths in all_frame_paths.values():
+        for frame_path in frame_paths:
+            with Image.open(frame_path) as image:
+                sizes.append(image.size)
+    return max(width for width, _ in sizes), max(height for _, height in sizes)
 
 
 def write_config(paths: Paths, durations: dict[str, int]) -> None:
@@ -230,6 +256,8 @@ def write_preview_html(paths: Paths) -> None:
 def main() -> None:
     args = parse_args()
     paths = resolve_paths(args.workspace)
+    if args.frame_duration is not None and args.frame_duration <= 0:
+        fail("frame duration must be a positive integer")
     require_strips(paths)
     for directory in (paths.frames, paths.gifs, paths.previews):
         directory.mkdir(parents=True, exist_ok=True)
@@ -239,8 +267,14 @@ def main() -> None:
         for state in STATES
     }
 
-    for state in STATES:
-        frame_paths = slice_strip(paths.strips / f"{state}.png", paths.frames / state)
+    all_frame_paths = {
+        state: slice_strip(paths.strips / f"{state}.png", paths.frames / state)
+        for state in STATES
+    }
+    canvas_size = target_canvas_size(all_frame_paths)
+
+    for state, frame_paths in all_frame_paths.items():
+        normalize_frames(frame_paths, canvas_size)
         build_gif(frame_paths, paths.gifs / f"{state}.gif", durations[state])
 
     write_config(paths, durations)

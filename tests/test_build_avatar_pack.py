@@ -52,6 +52,44 @@ def test_non_divisible_strip_width_is_trimmed_with_warning(
     assert Image.open(frames[0]).width == 32
 
 
+def test_build_removes_stale_frames_before_writing_new_output(
+    strip_workspace: Path, run_script
+) -> None:
+    stale = strip_workspace / "codie-pet" / "frames" / "idle" / "frame-99.png"
+    stale.parent.mkdir(parents=True)
+    stale.write_bytes(b"stale")
+
+    result = run_script("build", strip_workspace)
+
+    assert result.returncode == 0, result.stderr
+    assert not stale.exists()
+    frames = sorted((strip_workspace / "codie-pet" / "frames" / "idle").glob("frame-*.png"))
+    assert [frame.name for frame in frames] == [
+        "frame-01.png",
+        "frame-02.png",
+        "frame-03.png",
+        "frame-04.png",
+    ]
+
+
+def test_build_pads_all_frames_and_gifs_to_one_canvas(
+    strip_workspace: Path, run_script, make_strip, states
+) -> None:
+    make_strip(
+        strip_workspace / "codie-pet" / "strips" / "loading.png",
+        frame_size=(40, 48),
+    )
+
+    result = run_script("build", strip_workspace)
+
+    assert result.returncode == 0, result.stderr
+    root = strip_workspace / "codie-pet"
+    for state in states:
+        for frame in (root / "frames" / state).glob("frame-*.png"):
+            assert Image.open(frame).size == (40, 48)
+        assert Image.open(root / "gifs" / f"{state}.gif").size == (40, 48)
+
+
 def test_strip_smaller_than_four_pixels_fails(
     strip_workspace: Path, run_script
 ) -> None:
@@ -102,3 +140,12 @@ def test_frame_duration_override_applies_to_all_states(
     )
     for state in config["states"]:
         assert config["states"][state]["frameDurationMs"] == 100
+
+
+def test_frame_duration_override_must_be_positive(
+    strip_workspace: Path, run_script
+) -> None:
+    result = run_script("build", strip_workspace, "--frame-duration", "0")
+
+    assert result.returncode == 2
+    assert "frame duration must be a positive integer" in result.stderr

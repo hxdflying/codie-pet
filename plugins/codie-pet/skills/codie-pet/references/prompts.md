@@ -12,7 +12,7 @@ Hard requirements:
 - Large head, small body, clear facial expression.
 - Clean dark outline and flat cel-shaded colors.
 - Full body visible.
-- White or transparent background.
+- White background.
 - No labels, no frame numbers, no border, no scenery.
 - Do not render a realistic portrait.
 
@@ -29,7 +29,7 @@ Hard requirements:
 - Same character in every frame.
 - Same outfit, hairstyle, color palette, proportions, and accessories.
 - Enough spacing between frames for slicing.
-- White or transparent background.
+- White background.
 - No labels, no frame numbers, no grid lines, no borders.
 - No extra characters.
 - Do not crop hair, head, hands, feet, body, or props.

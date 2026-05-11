@@ -29,8 +29,8 @@
       "Write"
     ],
     "websiteURL": "https://github.com/hxdflying/codie-pet",
-    "privacyPolicyURL": "https://github.com/hxdflying/codie-pet#privacy",
-    "termsOfServiceURL": "https://github.com/hxdflying/codie-pet/blob/main/LICENSE",
+    "privacyPolicyURL": "https://github.com/hxdflying/codie-pet/blob/main/docs/privacy.md",
+    "termsOfServiceURL": "https://github.com/hxdflying/codie-pet/blob/main/docs/terms.md",
     "defaultPrompt": [
       "Create my CodiePet from this photo",
       "Install CodiePet in this workspace",
@@ -39,6 +39,8 @@
     "brandColor": "#10A37F",
     "composerIcon": "./assets/icon-small.svg",
     "logo": "./assets/icon.png",
-    "screenshots": []
+    "screenshots": [
+      "./assets/screenshot-preview.png"
+    ]
   }
 }

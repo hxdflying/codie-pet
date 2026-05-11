@@ -18,6 +18,8 @@ def parse_args() -> argparse.Namespace:
 
 def remove_block(content: str) -> str:
     pattern = re.compile(rf"\n?{re.escape(START)}.*?{re.escape(END)}\n?", re.DOTALL)
+    if not pattern.search(content):
+        return content
     cleaned = pattern.sub("\n", content)
     cleaned = re.sub(r"\n{3,}", "\n\n", cleaned).strip()
     return cleaned + "\n" if cleaned else ""
