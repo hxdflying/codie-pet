@@ -4,11 +4,11 @@
   "description": "Create a Q-style animated avatar pack for Codex workspace replies.",
   "author": {
     "name": "Xudong Han",
-    "email": "support@example.com",
-    "url": "https://github.com/"
+    "email": "ww1361095001@gmail.com",
+    "url": "https://github.com/hxdflying"
   },
-  "homepage": "https://github.com/",
-  "repository": "https://github.com/",
+  "homepage": "https://github.com/hxdflying/codie-pet",
+  "repository": "https://github.com/hxdflying/codie-pet",
   "license": "MIT",
   "keywords": [
     "avatar",
@@ -28,9 +28,9 @@
       "Interactive",
       "Write"
     ],
-    "websiteURL": "https://github.com/",
-    "privacyPolicyURL": "https://github.com/",
-    "termsOfServiceURL": "https://github.com/",
+    "websiteURL": "https://github.com/hxdflying/codie-pet",
+    "privacyPolicyURL": "https://github.com/hxdflying/codie-pet#privacy",
+    "termsOfServiceURL": "https://github.com/hxdflying/codie-pet/blob/main/LICENSE",
     "defaultPrompt": [
       "Create my CodiePet from this photo",
       "Install CodiePet in this workspace",
