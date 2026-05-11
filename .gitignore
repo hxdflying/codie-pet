@@ -3,3 +3,7 @@ __pycache__/
 *.pyc
 .venv/
 /codie-pet/
+
+# Local-only files (review notes, source material, drafts)
+*.pdf
+docs/review-*.md
