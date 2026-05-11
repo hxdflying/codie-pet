@@ -97,15 +97,20 @@ def slice_strip(strip_path: Path, out_dir: Path) -> list[Path]:
 
 
 def build_gif(frame_paths: list[Path], gif_path: Path, duration: int) -> None:
-    images = [Image.open(path).convert("RGBA") for path in frame_paths]
+    flattened: list[Image.Image] = []
+    for path in frame_paths:
+        rgba = Image.open(path).convert("RGBA")
+        background = Image.new("RGB", rgba.size, "white")
+        background.paste(rgba, mask=rgba.split()[3])
+        flattened.append(background)
     gif_path.parent.mkdir(parents=True, exist_ok=True)
-    images[0].save(
+    flattened[0].save(
         gif_path,
         save_all=True,
-        append_images=images[1:],
+        append_images=flattened[1:],
         duration=duration,
         loop=0,
-        disposal=2,
+        optimize=True,
     )
 
 
