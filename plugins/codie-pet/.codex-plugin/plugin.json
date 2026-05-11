@@ -1,5 +1,5 @@
 {
-  "name": "codex-avatar",
+  "name": "codie-pet",
   "version": "0.1.0",
   "description": "Create a Q-style animated avatar pack for Codex workspace replies.",
   "author": {
@@ -19,7 +19,7 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Codex Avatar",
+    "displayName": "CodiePet",
     "shortDescription": "Turn one person photo into Codex state GIFs",
     "longDescription": "Guides Codex through creating a Q-style animated avatar pack from one single-person photo, then installs workspace rules so Codex can use local state GIFs in replies.",
     "developerName": "Xudong Han",
@@ -32,9 +32,9 @@
     "privacyPolicyURL": "https://github.com/",
     "termsOfServiceURL": "https://github.com/",
     "defaultPrompt": [
-      "Create my Codex avatar from this photo",
-      "Install Codex Avatar in this workspace",
-      "Remove Codex Avatar from this workspace"
+      "Create my CodiePet from this photo",
+      "Install CodiePet in this workspace",
+      "Remove CodiePet from this workspace"
     ],
     "brandColor": "#10A37F",
     "composerIcon": "./assets/icon-small.svg",

@@ -1,4 +1,4 @@
-# Codex Avatar Prompt Templates
+# CodiePet Prompt Templates
 
 ## Character preview prompt
 

@@ -35,7 +35,7 @@ class Paths:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Build Codex avatar GIF pack from six four-frame strips.")
+    parser = argparse.ArgumentParser(description="Build CodiePet GIF pack from six four-frame strips.")
     parser.add_argument("--workspace", default=".", help="Workspace root. Default: current directory.")
     parser.add_argument("--frame-duration", type=int, default=180, help="GIF frame duration in milliseconds.")
     return parser.parse_args()
@@ -43,7 +43,7 @@ def parse_args() -> argparse.Namespace:
 
 def resolve_paths(workspace: str) -> Paths:
     root_workspace = Path(workspace).resolve()
-    root = root_workspace / "codex-avatar"
+    root = root_workspace / "codie-pet"
     return Paths(
         workspace=root_workspace,
         root=root,
@@ -159,7 +159,7 @@ def write_preview_html(paths: Paths) -> None:
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Codex Avatar Preview</title>
+    <title>CodiePet Preview</title>
     <style>
       body {{ font-family: system-ui, sans-serif; margin: 24px; background: #f7f7f7; color: #111; }}
       main {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }}
@@ -170,7 +170,7 @@ def write_preview_html(paths: Paths) -> None:
     </style>
   </head>
   <body>
-    <h1>Codex Avatar Preview</h1>
+    <h1>CodiePet Preview</h1>
     <main>
 {cards}
     </main>
@@ -195,7 +195,7 @@ def main() -> None:
     write_config(paths)
     render_contact_sheet(paths)
     write_preview_html(paths)
-    print(f"Built Codex avatar pack at {paths.root}")
+    print(f"Built CodiePet pack at {paths.root}")
 
 
 if __name__ == "__main__":

@@ -5,8 +5,8 @@ import sys
 from pathlib import Path
 
 
-INSTALL = Path("plugins/codex-avatar/scripts/install_avatar_rules.py")
-UNINSTALL = Path("plugins/codex-avatar/scripts/uninstall_avatar_rules.py")
+INSTALL = Path("plugins/codie-pet/scripts/install_avatar_rules.py")
+UNINSTALL = Path("plugins/codie-pet/scripts/uninstall_avatar_rules.py")
 
 
 def run_script(script: Path, workspace: Path) -> subprocess.CompletedProcess[str]:
@@ -26,9 +26,9 @@ def test_install_creates_agents_file_with_managed_block(tmp_path: Path) -> None:
 
     assert result.returncode == 0, result.stderr
     content = (workspace / "AGENTS.md").read_text()
-    assert "<!-- codex-avatar:start -->" in content
-    assert "<!-- codex-avatar:end -->" in content
-    assert "./codex-avatar/gifs/" in content
+    assert "<!-- codie-pet:start -->" in content
+    assert "<!-- codie-pet:end -->" in content
+    assert "./codie-pet/gifs/" in content
 
 
 def test_install_preserves_unrelated_content_and_replaces_existing_block(tmp_path: Path) -> None:
@@ -37,7 +37,7 @@ def test_install_preserves_unrelated_content_and_replaces_existing_block(tmp_pat
     agents = workspace / "AGENTS.md"
     agents.write_text(
         "# Project Rules\n\nKeep this.\n\n"
-        "<!-- codex-avatar:start -->\nold block\n<!-- codex-avatar:end -->\n\n"
+        "<!-- codie-pet:start -->\nold block\n<!-- codie-pet:end -->\n\n"
         "Keep this too.\n"
     )
 
@@ -48,8 +48,8 @@ def test_install_preserves_unrelated_content_and_replaces_existing_block(tmp_pat
     assert "Keep this." in content
     assert "Keep this too." in content
     assert "old block" not in content
-    assert content.count("<!-- codex-avatar:start -->") == 1
-    assert content.count("<!-- codex-avatar:end -->") == 1
+    assert content.count("<!-- codie-pet:start -->") == 1
+    assert content.count("<!-- codie-pet:end -->") == 1
 
 
 def test_uninstall_removes_only_managed_block(tmp_path: Path) -> None:
@@ -64,7 +64,7 @@ def test_uninstall_removes_only_managed_block(tmp_path: Path) -> None:
 
     assert result.returncode == 0, result.stderr
     content = agents.read_text()
-    assert "<!-- codex-avatar:start -->" not in content
-    assert "<!-- codex-avatar:end -->" not in content
+    assert "<!-- codie-pet:start -->" not in content
+    assert "<!-- codie-pet:end -->" not in content
     assert "Keep this." in content
     assert "Keep this too." in content

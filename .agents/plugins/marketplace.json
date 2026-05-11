@@ -1,14 +1,14 @@
 {
-  "name": "codex-avatar-local",
+  "name": "codie-pet-local",
   "interface": {
-    "displayName": "Codex Avatar Local"
+    "displayName": "CodiePet Local"
   },
   "plugins": [
     {
-      "name": "codex-avatar",
+      "name": "codie-pet",
       "source": {
         "source": "local",
-        "path": "./plugins/codex-avatar"
+        "path": "./plugins/codie-pet"
       },
       "policy": {
         "installation": "AVAILABLE",

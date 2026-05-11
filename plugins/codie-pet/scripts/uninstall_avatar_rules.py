@@ -6,12 +6,12 @@ import re
 from pathlib import Path
 
 
-START = "<!-- codex-avatar:start -->"
-END = "<!-- codex-avatar:end -->"
+START = "<!-- codie-pet:start -->"
+END = "<!-- codie-pet:end -->"
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Remove Codex Avatar workspace AGENTS.md rules.")
+    parser = argparse.ArgumentParser(description="Remove CodiePet workspace AGENTS.md rules.")
     parser.add_argument("--workspace", default=".", help="Workspace root. Default: current directory.")
     return parser.parse_args()
 
@@ -31,7 +31,7 @@ def main() -> None:
         print(f"No AGENTS.md found at {agents}")
         return
     agents.write_text(remove_block(agents.read_text(encoding="utf-8")), encoding="utf-8")
-    print(f"Removed Codex Avatar rules from {agents}")
+    print(f"Removed CodiePet rules from {agents}")
 
 
 if __name__ == "__main__":

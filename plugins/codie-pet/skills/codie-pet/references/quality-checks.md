@@ -1,4 +1,4 @@
-# Codex Avatar Quality Checks
+# CodiePet Quality Checks
 
 ## Source image checks
 
@@ -14,4 +14,4 @@ A state strip passes when it is one horizontal row, contains exactly four frames
 
 ## Final pack checks
 
-The final pack passes when all six GIFs exist, each state has four PNG frames, `avatar.config.json` exists, and at least one preview file exists under `codex-avatar/previews/`.
+The final pack passes when all six GIFs exist, each state has four PNG frames, `avatar.config.json` exists, and at least one preview file exists under `codie-pet/previews/`.

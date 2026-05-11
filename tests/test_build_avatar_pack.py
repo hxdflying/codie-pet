@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw
 
 
 STATES = ("idle", "peek", "loading", "coding", "error", "done")
-SCRIPT = Path("plugins/codex-avatar/scripts/build_avatar_pack.py")
+SCRIPT = Path("plugins/codie-pet/scripts/build_avatar_pack.py")
 
 
 def make_strip(path: Path, frame_size: tuple[int, int] = (32, 32), frames: int = 4) -> None:
@@ -28,7 +28,7 @@ def make_strip(path: Path, frame_size: tuple[int, int] = (32, 32), frames: int =
 def make_workspace(tmp_path: Path) -> Path:
     workspace = tmp_path / "workspace"
     for state in STATES:
-        make_strip(workspace / "codex-avatar" / "strips" / f"{state}.png")
+        make_strip(workspace / "codie-pet" / "strips" / f"{state}.png")
     return workspace
 
 
@@ -47,7 +47,7 @@ def test_builds_gifs_frames_config_and_previews(tmp_path: Path) -> None:
     result = run_builder(workspace)
 
     assert result.returncode == 0, result.stderr
-    root = workspace / "codex-avatar"
+    root = workspace / "codie-pet"
     for state in STATES:
         assert (root / "gifs" / f"{state}.gif").is_file()
         frames = sorted((root / "frames" / state).glob("frame-*.png"))
@@ -63,7 +63,7 @@ def test_builds_gifs_frames_config_and_previews(tmp_path: Path) -> None:
 
 def test_missing_required_strip_fails_with_clear_message(tmp_path: Path) -> None:
     workspace = make_workspace(tmp_path)
-    (workspace / "codex-avatar" / "strips" / "done.png").unlink()
+    (workspace / "codie-pet" / "strips" / "done.png").unlink()
 
     result = run_builder(workspace)
 
@@ -74,7 +74,7 @@ def test_missing_required_strip_fails_with_clear_message(tmp_path: Path) -> None
 def test_non_divisible_strip_width_fails(tmp_path: Path) -> None:
     workspace = make_workspace(tmp_path)
     bad = Image.new("RGBA", (130, 32), (255, 255, 255, 0))
-    bad.save(workspace / "codex-avatar" / "strips" / "idle.png")
+    bad.save(workspace / "codie-pet" / "strips" / "idle.png")
 
     result = run_builder(workspace)
 

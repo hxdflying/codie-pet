@@ -6,12 +6,12 @@ import re
 from pathlib import Path
 
 
-START = "<!-- codex-avatar:start -->"
-END = "<!-- codex-avatar:end -->"
+START = "<!-- codie-pet:start -->"
+END = "<!-- codie-pet:end -->"
 BLOCK = f"""{START}
-## Codex Avatar GIF Response Style
+## CodiePet GIF Response Style
 
-Use local avatar GIFs from `./codex-avatar/gifs/` when replying in this workspace.
+Use local avatar GIFs from `./codie-pet/gifs/` when replying in this workspace.
 
 - Use `idle.gif` for general chat, thinking, and lightweight answers.
 - Use `peek.gif` when reading files, inspecting context, or checking previews.
@@ -35,7 +35,7 @@ Selection rules:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Install Codex Avatar workspace AGENTS.md rules.")
+    parser = argparse.ArgumentParser(description="Install CodiePet workspace AGENTS.md rules.")
     parser.add_argument("--workspace", default=".", help="Workspace root. Default: current directory.")
     return parser.parse_args()
 
@@ -55,7 +55,7 @@ def main() -> None:
     agents = workspace / "AGENTS.md"
     content = agents.read_text(encoding="utf-8") if agents.exists() else ""
     agents.write_text(replace_block(content), encoding="utf-8")
-    print(f"Installed Codex Avatar rules in {agents}")
+    print(f"Installed CodiePet rules in {agents}")
 
 
 if __name__ == "__main__":

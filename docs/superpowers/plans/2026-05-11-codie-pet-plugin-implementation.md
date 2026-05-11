@@ -1,10 +1,10 @@
-# Codex Avatar Plugin Implementation Plan
+# CodiePet Plugin Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the v0.1 local Codex Avatar plugin that guides single-person photo avatar generation, processes six four-frame state strips into GIFs, and installs workspace-local `AGENTS.md` response rules.
+**Goal:** Build the v0.1 local CodiePet plugin that guides single-person photo avatar generation, processes six four-frame state strips into GIFs, and installs workspace-local `AGENTS.md` response rules.
 
-**Architecture:** The plugin is a local Codex bundle under `plugins/codex-avatar/`. The skill owns user workflow and image-generation prompting, while Python scripts own deterministic local processing: slicing strips, generating GIFs, validating output, and managing the `AGENTS.md` block. Tests exercise the scripts with synthetic images so the core file-processing behavior is reliable without model calls.
+**Architecture:** The plugin is a local Codex bundle under `plugins/codie-pet/`. The skill owns user workflow and image-generation prompting, while Python scripts own deterministic local processing: slicing strips, generating GIFs, validating output, and managing the `AGENTS.md` block. Tests exercise the scripts with synthetic images so the core file-processing behavior is reliable without model calls.
 
 **Tech Stack:** Codex plugin manifest, Codex skill markdown, Python 3.11-compatible scripts, Pillow for image processing, pytest for tests, JSON config files, local workspace files.
 
@@ -12,17 +12,17 @@
 
 ## File Map
 
-- `plugins/codex-avatar/.codex-plugin/plugin.json`: Codex plugin manifest and UI metadata.
-- `plugins/codex-avatar/skills/codex-avatar/SKILL.md`: Workflow instructions Codex loads when users ask to create, install, regenerate, disable, or remove an avatar.
-- `plugins/codex-avatar/skills/codex-avatar/references/workflow.md`: Detailed v0.1 workflow and state machine.
-- `plugins/codex-avatar/skills/codex-avatar/references/prompts.md`: Character preview prompt and per-state strip prompt templates.
-- `plugins/codex-avatar/skills/codex-avatar/references/quality-checks.md`: Acceptance checks for input photos, previews, strips, and final GIF packs.
-- `plugins/codex-avatar/scripts/build_avatar_pack.py`: Builds frames, GIFs, `avatar.config.json`, contact sheet, and preview HTML from six state strips.
-- `plugins/codex-avatar/scripts/validate_avatar_pack.py`: Checks generated pack completeness and prints a pass/fail report.
-- `plugins/codex-avatar/scripts/install_avatar_rules.py`: Inserts or replaces the managed `codex-avatar` block in workspace `AGENTS.md`.
-- `plugins/codex-avatar/scripts/uninstall_avatar_rules.py`: Removes the managed `codex-avatar` block from workspace `AGENTS.md`.
-- `plugins/codex-avatar/assets/icon-small.svg`: Small composer icon.
-- `plugins/codex-avatar/assets/icon.png`: Plugin logo asset. Use a tiny generated PNG in v0.1.
+- `plugins/codie-pet/.codex-plugin/plugin.json`: Codex plugin manifest and UI metadata.
+- `plugins/codie-pet/skills/codie-pet/SKILL.md`: Workflow instructions Codex loads when users ask to create, install, regenerate, disable, or remove an avatar.
+- `plugins/codie-pet/skills/codie-pet/references/workflow.md`: Detailed v0.1 workflow and state machine.
+- `plugins/codie-pet/skills/codie-pet/references/prompts.md`: Character preview prompt and per-state strip prompt templates.
+- `plugins/codie-pet/skills/codie-pet/references/quality-checks.md`: Acceptance checks for input photos, previews, strips, and final GIF packs.
+- `plugins/codie-pet/scripts/build_avatar_pack.py`: Builds frames, GIFs, `avatar.config.json`, contact sheet, and preview HTML from six state strips.
+- `plugins/codie-pet/scripts/validate_avatar_pack.py`: Checks generated pack completeness and prints a pass/fail report.
+- `plugins/codie-pet/scripts/install_avatar_rules.py`: Inserts or replaces the managed `codie-pet` block in workspace `AGENTS.md`.
+- `plugins/codie-pet/scripts/uninstall_avatar_rules.py`: Removes the managed `codie-pet` block from workspace `AGENTS.md`.
+- `plugins/codie-pet/assets/icon-small.svg`: Small composer icon.
+- `plugins/codie-pet/assets/icon.png`: Plugin logo asset. Use a tiny generated PNG in v0.1.
 - `.agents/plugins/marketplace.json`: Repo-local marketplace entry for local testing and sharing.
 - `README.md`: Installation, desktop app usage, privacy, limitations, and development instructions.
 - `requirements-dev.txt`: Test and script dependencies.
@@ -56,7 +56,7 @@ __pycache__/
 .pytest_cache/
 *.pyc
 .venv/
-codex-avatar/
+codie-pet/
 ```
 
 - [ ] **Step 3: Verify dependency file is readable**
@@ -85,9 +85,9 @@ Expected: commit succeeds. If `git rev-parse --show-toplevel` fails, initialize 
 ### Task 2: Plugin Manifest and Marketplace Entry
 
 **Files:**
-- Create: `plugins/codex-avatar/.codex-plugin/plugin.json`
-- Create: `plugins/codex-avatar/assets/icon-small.svg`
-- Create: `plugins/codex-avatar/assets/icon.png`
+- Create: `plugins/codie-pet/.codex-plugin/plugin.json`
+- Create: `plugins/codie-pet/assets/icon-small.svg`
+- Create: `plugins/codie-pet/assets/icon.png`
 - Create: `.agents/plugins/marketplace.json`
 
 - [ ] **Step 1: Create plugin directories**
@@ -95,18 +95,18 @@ Expected: commit succeeds. If `git rev-parse --show-toplevel` fails, initialize 
 Run:
 
 ```bash
-mkdir -p plugins/codex-avatar/.codex-plugin plugins/codex-avatar/assets .agents/plugins
+mkdir -p plugins/codie-pet/.codex-plugin plugins/codie-pet/assets .agents/plugins
 ```
 
 Expected: directories exist.
 
 - [ ] **Step 2: Create plugin manifest**
 
-Create `plugins/codex-avatar/.codex-plugin/plugin.json`:
+Create `plugins/codie-pet/.codex-plugin/plugin.json`:
 
 ```json
 {
-  "name": "codex-avatar",
+  "name": "codie-pet",
   "version": "0.1.0",
   "description": "Create a Q-style animated avatar pack for Codex workspace replies.",
   "author": {
@@ -126,7 +126,7 @@ Create `plugins/codex-avatar/.codex-plugin/plugin.json`:
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Codex Avatar",
+    "displayName": "CodiePet",
     "shortDescription": "Turn one person photo into Codex state GIFs",
     "longDescription": "Guides Codex through creating a Q-style animated avatar pack from one single-person photo, then installs workspace rules so Codex can use local state GIFs in replies.",
     "developerName": "Xudong Han",
@@ -139,9 +139,9 @@ Create `plugins/codex-avatar/.codex-plugin/plugin.json`:
     "privacyPolicyURL": "https://github.com/",
     "termsOfServiceURL": "https://github.com/",
     "defaultPrompt": [
-      "Create my Codex avatar from this photo",
-      "Install Codex Avatar in this workspace",
-      "Remove Codex Avatar from this workspace"
+      "Create my CodiePet from this photo",
+      "Install CodiePet in this workspace",
+      "Remove CodiePet from this workspace"
     ],
     "brandColor": "#10A37F",
     "composerIcon": "./assets/icon-small.svg",
@@ -153,10 +153,10 @@ Create `plugins/codex-avatar/.codex-plugin/plugin.json`:
 
 - [ ] **Step 3: Create small SVG icon**
 
-Create `plugins/codex-avatar/assets/icon-small.svg`:
+Create `plugins/codie-pet/assets/icon-small.svg`:
 
 ```xml
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Codex Avatar">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CodiePet">
   <rect width="64" height="64" rx="14" fill="#10A37F"/>
   <circle cx="32" cy="25" r="13" fill="#FFFFFF"/>
   <path d="M16 53c2-11 10-18 16-18s14 7 16 18" fill="#FFFFFF"/>
@@ -175,7 +175,7 @@ python3 - <<'PY'
 from pathlib import Path
 from PIL import Image, ImageDraw
 
-out = Path("plugins/codex-avatar/assets/icon.png")
+out = Path("plugins/codie-pet/assets/icon.png")
 out.parent.mkdir(parents=True, exist_ok=True)
 img = Image.new("RGBA", (256, 256), "#10A37F")
 draw = ImageDraw.Draw(img)
@@ -189,7 +189,7 @@ img.save(out)
 PY
 ```
 
-Expected: `plugins/codex-avatar/assets/icon.png` exists and is a valid PNG.
+Expected: `plugins/codie-pet/assets/icon.png` exists and is a valid PNG.
 
 - [ ] **Step 5: Create repo-local marketplace**
 
@@ -197,16 +197,16 @@ Create `.agents/plugins/marketplace.json`:
 
 ```json
 {
-  "name": "codex-avatar-local",
+  "name": "codie-pet-local",
   "interface": {
-    "displayName": "Codex Avatar Local"
+    "displayName": "CodiePet Local"
   },
   "plugins": [
     {
-      "name": "codex-avatar",
+      "name": "codie-pet",
       "source": {
         "source": "local",
-        "path": "./plugins/codex-avatar"
+        "path": "./plugins/codie-pet"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -223,8 +223,8 @@ Create `.agents/plugins/marketplace.json`:
 Run:
 
 ```bash
-python3 -m json.tool plugins/codex-avatar/.codex-plugin/plugin.json >/tmp/codex-avatar-plugin-json.out
-python3 -m json.tool .agents/plugins/marketplace.json >/tmp/codex-avatar-marketplace-json.out
+python3 -m json.tool plugins/codie-pet/.codex-plugin/plugin.json >/tmp/codie-pet-plugin-json.out
+python3 -m json.tool .agents/plugins/marketplace.json >/tmp/codie-pet-marketplace-json.out
 ```
 
 Expected: both commands exit 0.
@@ -232,8 +232,8 @@ Expected: both commands exit 0.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add plugins/codex-avatar/.codex-plugin/plugin.json plugins/codex-avatar/assets .agents/plugins/marketplace.json
-git commit -m "feat: add codex avatar plugin manifest"
+git add plugins/codie-pet/.codex-plugin/plugin.json plugins/codie-pet/assets .agents/plugins/marketplace.json
+git commit -m "feat: add CodiePet plugin manifest"
 ```
 
 Expected: commit succeeds in a valid git repository.
@@ -243,32 +243,32 @@ Expected: commit succeeds in a valid git repository.
 ### Task 3: Skill and Reference Documentation
 
 **Files:**
-- Create: `plugins/codex-avatar/skills/codex-avatar/SKILL.md`
-- Create: `plugins/codex-avatar/skills/codex-avatar/references/workflow.md`
-- Create: `plugins/codex-avatar/skills/codex-avatar/references/prompts.md`
-- Create: `plugins/codex-avatar/skills/codex-avatar/references/quality-checks.md`
+- Create: `plugins/codie-pet/skills/codie-pet/SKILL.md`
+- Create: `plugins/codie-pet/skills/codie-pet/references/workflow.md`
+- Create: `plugins/codie-pet/skills/codie-pet/references/prompts.md`
+- Create: `plugins/codie-pet/skills/codie-pet/references/quality-checks.md`
 
 - [ ] **Step 1: Create skill directories**
 
 Run:
 
 ```bash
-mkdir -p plugins/codex-avatar/skills/codex-avatar/references
+mkdir -p plugins/codie-pet/skills/codie-pet/references
 ```
 
 Expected: directories exist.
 
 - [ ] **Step 2: Create main skill file**
 
-Create `plugins/codex-avatar/skills/codex-avatar/SKILL.md`:
+Create `plugins/codie-pet/skills/codie-pet/SKILL.md`:
 
 ```markdown
 ---
-name: codex-avatar
-description: Create, install, regenerate, validate, or remove a Q-style Codex avatar GIF pack for a workspace. Use when the user asks to turn one single-person photo into Codex chat state GIFs, install avatar GIF behavior, or remove avatar behavior.
+name: codie-pet
+description: Create, install, regenerate, validate, or remove a Q-style CodiePet GIF pack for a workspace. Use when the user asks to turn one single-person photo into Codex chat state GIFs, install avatar GIF behavior, or remove avatar behavior.
 ---
 
-# Codex Avatar
+# CodiePet
 
 Use this skill to guide a user through creating a local Q-style avatar pack for Codex replies.
 
@@ -285,11 +285,11 @@ The plugin stores generated assets locally in the current workspace. It does not
 3. Generate one Q-style character preview using `references/prompts.md`.
 4. Stop and ask the user to confirm the preview.
 5. Only after confirmation, generate six state strips: `idle`, `peek`, `loading`, `coding`, `error`, `done`.
-6. Save state strips under `codex-avatar/strips/`.
-7. Run `python3 plugins/codex-avatar/scripts/build_avatar_pack.py --workspace .`.
-8. Run `python3 plugins/codex-avatar/scripts/validate_avatar_pack.py --workspace .`.
-9. Ask the user to review `codex-avatar/previews/preview.html` or `codex-avatar/previews/contact-sheet.png`.
-10. If the user approves installation, run `python3 plugins/codex-avatar/scripts/install_avatar_rules.py --workspace .`.
+6. Save state strips under `codie-pet/strips/`.
+7. Run `python3 plugins/codie-pet/scripts/build_avatar_pack.py --workspace .`.
+8. Run `python3 plugins/codie-pet/scripts/validate_avatar_pack.py --workspace .`.
+9. Ask the user to review `codie-pet/previews/preview.html` or `codie-pet/previews/contact-sheet.png`.
+10. If the user approves installation, run `python3 plugins/codie-pet/scripts/install_avatar_rules.py --workspace .`.
 
 ## Confirmation choices
 
@@ -303,7 +303,7 @@ Do not generate state strips before the user chooses to use the character.
 
 ## Script locations
 
-All plugin scripts are under `plugins/codex-avatar/scripts/`.
+All plugin scripts are under `plugins/codie-pet/scripts/`.
 
 ## References
 
@@ -314,17 +314,17 @@ All plugin scripts are under `plugins/codex-avatar/scripts/`.
 
 - [ ] **Step 3: Create workflow reference**
 
-Create `plugins/codex-avatar/skills/codex-avatar/references/workflow.md`:
+Create `plugins/codie-pet/skills/codie-pet/references/workflow.md`:
 
 ````markdown
-# Codex Avatar Workflow
+# CodiePet Workflow
 
 ## Workspace output
 
-Generated files live under `codex-avatar/` in the user's current workspace:
+Generated files live under `codie-pet/` in the user's current workspace:
 
 ```text
-codex-avatar/
+codie-pet/
   source/
   strips/
   frames/
@@ -347,34 +347,34 @@ codex-avatar/
 Build the pack:
 
 ```bash
-python3 plugins/codex-avatar/scripts/build_avatar_pack.py --workspace .
+python3 plugins/codie-pet/scripts/build_avatar_pack.py --workspace .
 ```
 
 Validate the pack:
 
 ```bash
-python3 plugins/codex-avatar/scripts/validate_avatar_pack.py --workspace .
+python3 plugins/codie-pet/scripts/validate_avatar_pack.py --workspace .
 ```
 
 Install workspace rules:
 
 ```bash
-python3 plugins/codex-avatar/scripts/install_avatar_rules.py --workspace .
+python3 plugins/codie-pet/scripts/install_avatar_rules.py --workspace .
 ```
 
 Remove workspace rules:
 
 ```bash
-python3 plugins/codex-avatar/scripts/uninstall_avatar_rules.py --workspace .
+python3 plugins/codie-pet/scripts/uninstall_avatar_rules.py --workspace .
 ```
 ````
 
 - [ ] **Step 4: Create prompt reference**
 
-Create `plugins/codex-avatar/skills/codex-avatar/references/prompts.md`:
+Create `plugins/codie-pet/skills/codie-pet/references/prompts.md`:
 
 ```markdown
-# Codex Avatar Prompt Templates
+# CodiePet Prompt Templates
 
 ## Character preview prompt
 
@@ -422,10 +422,10 @@ Animation beat for `<STATE>`:
 
 - [ ] **Step 5: Create quality check reference**
 
-Create `plugins/codex-avatar/skills/codex-avatar/references/quality-checks.md`:
+Create `plugins/codie-pet/skills/codie-pet/references/quality-checks.md`:
 
 ```markdown
-# Codex Avatar Quality Checks
+# CodiePet Quality Checks
 
 ## Source image checks
 
@@ -441,7 +441,7 @@ A state strip passes when it is one horizontal row, contains exactly four frames
 
 ## Final pack checks
 
-The final pack passes when all six GIFs exist, each state has four PNG frames, `avatar.config.json` exists, and at least one preview file exists under `codex-avatar/previews/`.
+The final pack passes when all six GIFs exist, each state has four PNG frames, `avatar.config.json` exists, and at least one preview file exists under `codie-pet/previews/`.
 ```
 
 - [ ] **Step 6: Verify skill files contain required trigger terms**
@@ -449,7 +449,7 @@ The final pack passes when all six GIFs exist, each state has four PNG frames, `
 Run:
 
 ```bash
-rg -n "single-person|character preview|idle|peek|loading|coding|error|done|AGENTS.md" plugins/codex-avatar/skills/codex-avatar
+rg -n "single-person|character preview|idle|peek|loading|coding|error|done|AGENTS.md" plugins/codie-pet/skills/codie-pet
 ```
 
 Expected: matches appear across `SKILL.md` and reference files.
@@ -457,8 +457,8 @@ Expected: matches appear across `SKILL.md` and reference files.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add plugins/codex-avatar/skills/codex-avatar
-git commit -m "feat: add codex avatar skill workflow"
+git add plugins/codie-pet/skills/codie-pet
+git commit -m "feat: add CodiePet skill workflow"
 ```
 
 Expected: commit succeeds in a valid git repository.
@@ -496,7 +496,7 @@ from PIL import Image, ImageDraw
 
 
 STATES = ("idle", "peek", "loading", "coding", "error", "done")
-SCRIPT = Path("plugins/codex-avatar/scripts/build_avatar_pack.py")
+SCRIPT = Path("plugins/codie-pet/scripts/build_avatar_pack.py")
 
 
 def make_strip(path: Path, frame_size: tuple[int, int] = (32, 32), frames: int = 4) -> None:
@@ -515,7 +515,7 @@ def make_strip(path: Path, frame_size: tuple[int, int] = (32, 32), frames: int =
 def make_workspace(tmp_path: Path) -> Path:
     workspace = tmp_path / "workspace"
     for state in STATES:
-        make_strip(workspace / "codex-avatar" / "strips" / f"{state}.png")
+        make_strip(workspace / "codie-pet" / "strips" / f"{state}.png")
     return workspace
 
 
@@ -534,7 +534,7 @@ def test_builds_gifs_frames_config_and_previews(tmp_path: Path) -> None:
     result = run_builder(workspace)
 
     assert result.returncode == 0, result.stderr
-    root = workspace / "codex-avatar"
+    root = workspace / "codie-pet"
     for state in STATES:
         assert (root / "gifs" / f"{state}.gif").is_file()
         frames = sorted((root / "frames" / state).glob("frame-*.png"))
@@ -550,7 +550,7 @@ def test_builds_gifs_frames_config_and_previews(tmp_path: Path) -> None:
 
 def test_missing_required_strip_fails_with_clear_message(tmp_path: Path) -> None:
     workspace = make_workspace(tmp_path)
-    (workspace / "codex-avatar" / "strips" / "done.png").unlink()
+    (workspace / "codie-pet" / "strips" / "done.png").unlink()
 
     result = run_builder(workspace)
 
@@ -561,7 +561,7 @@ def test_missing_required_strip_fails_with_clear_message(tmp_path: Path) -> None
 def test_non_divisible_strip_width_fails(tmp_path: Path) -> None:
     workspace = make_workspace(tmp_path)
     bad = Image.new("RGBA", (130, 32), (255, 255, 255, 0))
-    bad.save(workspace / "codex-avatar" / "strips" / "idle.png")
+    bad.save(workspace / "codie-pet" / "strips" / "idle.png")
 
     result = run_builder(workspace)
 
@@ -577,7 +577,7 @@ Run:
 python3 -m pytest tests/test_build_avatar_pack.py -q
 ```
 
-Expected: tests fail because `plugins/codex-avatar/scripts/build_avatar_pack.py` does not exist.
+Expected: tests fail because `plugins/codie-pet/scripts/build_avatar_pack.py` does not exist.
 
 - [ ] **Step 4: Commit failing tests**
 
@@ -593,21 +593,21 @@ Expected: commit succeeds in a valid git repository.
 ### Task 5: Implement Avatar Pack Builder
 
 **Files:**
-- Create: `plugins/codex-avatar/scripts/build_avatar_pack.py`
+- Create: `plugins/codie-pet/scripts/build_avatar_pack.py`
 
 - [ ] **Step 1: Create scripts directory**
 
 Run:
 
 ```bash
-mkdir -p plugins/codex-avatar/scripts
+mkdir -p plugins/codie-pet/scripts
 ```
 
 Expected: scripts directory exists.
 
 - [ ] **Step 2: Implement builder script**
 
-Create `plugins/codex-avatar/scripts/build_avatar_pack.py`:
+Create `plugins/codie-pet/scripts/build_avatar_pack.py`:
 
 ```python
 #!/usr/bin/env python3
@@ -647,7 +647,7 @@ class Paths:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Build Codex avatar GIF pack from six four-frame strips.")
+    parser = argparse.ArgumentParser(description="Build CodiePet GIF pack from six four-frame strips.")
     parser.add_argument("--workspace", default=".", help="Workspace root. Default: current directory.")
     parser.add_argument("--frame-duration", type=int, default=180, help="GIF frame duration in milliseconds.")
     return parser.parse_args()
@@ -655,7 +655,7 @@ def parse_args() -> argparse.Namespace:
 
 def resolve_paths(workspace: str) -> Paths:
     root_workspace = Path(workspace).resolve()
-    root = root_workspace / "codex-avatar"
+    root = root_workspace / "codie-pet"
     return Paths(
         workspace=root_workspace,
         root=root,
@@ -771,7 +771,7 @@ def write_preview_html(paths: Paths) -> None:
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Codex Avatar Preview</title>
+    <title>CodiePet Preview</title>
     <style>
       body {{ font-family: system-ui, sans-serif; margin: 24px; background: #f7f7f7; color: #111; }}
       main {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }}
@@ -782,7 +782,7 @@ def write_preview_html(paths: Paths) -> None:
     </style>
   </head>
   <body>
-    <h1>Codex Avatar Preview</h1>
+    <h1>CodiePet Preview</h1>
     <main>
 {cards}
     </main>
@@ -807,7 +807,7 @@ def main() -> None:
     write_config(paths)
     render_contact_sheet(paths)
     write_preview_html(paths)
-    print(f"Built Codex avatar pack at {paths.root}")
+    print(f"Built CodiePet pack at {paths.root}")
 
 
 if __name__ == "__main__":
@@ -827,7 +827,7 @@ Expected: all tests in `test_build_avatar_pack.py` pass.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add plugins/codex-avatar/scripts/build_avatar_pack.py tests/test_build_avatar_pack.py
+git add plugins/codie-pet/scripts/build_avatar_pack.py tests/test_build_avatar_pack.py
 git commit -m "feat: build avatar gif packs from state strips"
 ```
 
@@ -852,8 +852,8 @@ import sys
 from pathlib import Path
 
 
-INSTALL = Path("plugins/codex-avatar/scripts/install_avatar_rules.py")
-UNINSTALL = Path("plugins/codex-avatar/scripts/uninstall_avatar_rules.py")
+INSTALL = Path("plugins/codie-pet/scripts/install_avatar_rules.py")
+UNINSTALL = Path("plugins/codie-pet/scripts/uninstall_avatar_rules.py")
 
 
 def run_script(script: Path, workspace: Path) -> subprocess.CompletedProcess[str]:
@@ -873,9 +873,9 @@ def test_install_creates_agents_file_with_managed_block(tmp_path: Path) -> None:
 
     assert result.returncode == 0, result.stderr
     content = (workspace / "AGENTS.md").read_text()
-    assert "<!-- codex-avatar:start -->" in content
-    assert "<!-- codex-avatar:end -->" in content
-    assert "./codex-avatar/gifs/" in content
+    assert "<!-- codie-pet:start -->" in content
+    assert "<!-- codie-pet:end -->" in content
+    assert "./codie-pet/gifs/" in content
 
 
 def test_install_preserves_unrelated_content_and_replaces_existing_block(tmp_path: Path) -> None:
@@ -884,7 +884,7 @@ def test_install_preserves_unrelated_content_and_replaces_existing_block(tmp_pat
     agents = workspace / "AGENTS.md"
     agents.write_text(
         "# Project Rules\n\nKeep this.\n\n"
-        "<!-- codex-avatar:start -->\nold block\n<!-- codex-avatar:end -->\n\n"
+        "<!-- codie-pet:start -->\nold block\n<!-- codie-pet:end -->\n\n"
         "Keep this too.\n"
     )
 
@@ -895,8 +895,8 @@ def test_install_preserves_unrelated_content_and_replaces_existing_block(tmp_pat
     assert "Keep this." in content
     assert "Keep this too." in content
     assert "old block" not in content
-    assert content.count("<!-- codex-avatar:start -->") == 1
-    assert content.count("<!-- codex-avatar:end -->") == 1
+    assert content.count("<!-- codie-pet:start -->") == 1
+    assert content.count("<!-- codie-pet:end -->") == 1
 
 
 def test_uninstall_removes_only_managed_block(tmp_path: Path) -> None:
@@ -911,8 +911,8 @@ def test_uninstall_removes_only_managed_block(tmp_path: Path) -> None:
 
     assert result.returncode == 0, result.stderr
     content = agents.read_text()
-    assert "<!-- codex-avatar:start -->" not in content
-    assert "<!-- codex-avatar:end -->" not in content
+    assert "<!-- codie-pet:start -->" not in content
+    assert "<!-- codie-pet:end -->" not in content
     assert "Keep this." in content
     assert "Keep this too." in content
 ```
@@ -941,12 +941,12 @@ Expected: commit succeeds in a valid git repository.
 ### Task 7: Implement AGENTS.md Install and Uninstall Scripts
 
 **Files:**
-- Create: `plugins/codex-avatar/scripts/install_avatar_rules.py`
-- Create: `plugins/codex-avatar/scripts/uninstall_avatar_rules.py`
+- Create: `plugins/codie-pet/scripts/install_avatar_rules.py`
+- Create: `plugins/codie-pet/scripts/uninstall_avatar_rules.py`
 
 - [ ] **Step 1: Implement install script**
 
-Create `plugins/codex-avatar/scripts/install_avatar_rules.py`:
+Create `plugins/codie-pet/scripts/install_avatar_rules.py`:
 
 ```python
 #!/usr/bin/env python3
@@ -957,12 +957,12 @@ import re
 from pathlib import Path
 
 
-START = "<!-- codex-avatar:start -->"
-END = "<!-- codex-avatar:end -->"
+START = "<!-- codie-pet:start -->"
+END = "<!-- codie-pet:end -->"
 BLOCK = f"""{START}
-## Codex Avatar GIF Response Style
+## CodiePet GIF Response Style
 
-Use local avatar GIFs from `./codex-avatar/gifs/` when replying in this workspace.
+Use local avatar GIFs from `./codie-pet/gifs/` when replying in this workspace.
 
 - Use `idle.gif` for general chat, thinking, and lightweight answers.
 - Use `peek.gif` when reading files, inspecting context, or checking previews.
@@ -986,7 +986,7 @@ Selection rules:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Install Codex Avatar workspace AGENTS.md rules.")
+    parser = argparse.ArgumentParser(description="Install CodiePet workspace AGENTS.md rules.")
     parser.add_argument("--workspace", default=".", help="Workspace root. Default: current directory.")
     return parser.parse_args()
 
@@ -1006,7 +1006,7 @@ def main() -> None:
     agents = workspace / "AGENTS.md"
     content = agents.read_text(encoding="utf-8") if agents.exists() else ""
     agents.write_text(replace_block(content), encoding="utf-8")
-    print(f"Installed Codex Avatar rules in {agents}")
+    print(f"Installed CodiePet rules in {agents}")
 
 
 if __name__ == "__main__":
@@ -1015,7 +1015,7 @@ if __name__ == "__main__":
 
 - [ ] **Step 2: Implement uninstall script**
 
-Create `plugins/codex-avatar/scripts/uninstall_avatar_rules.py`:
+Create `plugins/codie-pet/scripts/uninstall_avatar_rules.py`:
 
 ```python
 #!/usr/bin/env python3
@@ -1026,12 +1026,12 @@ import re
 from pathlib import Path
 
 
-START = "<!-- codex-avatar:start -->"
-END = "<!-- codex-avatar:end -->"
+START = "<!-- codie-pet:start -->"
+END = "<!-- codie-pet:end -->"
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Remove Codex Avatar workspace AGENTS.md rules.")
+    parser = argparse.ArgumentParser(description="Remove CodiePet workspace AGENTS.md rules.")
     parser.add_argument("--workspace", default=".", help="Workspace root. Default: current directory.")
     return parser.parse_args()
 
@@ -1051,7 +1051,7 @@ def main() -> None:
         print(f"No AGENTS.md found at {agents}")
         return
     agents.write_text(remove_block(agents.read_text(encoding="utf-8")), encoding="utf-8")
-    print(f"Removed Codex Avatar rules from {agents}")
+    print(f"Removed CodiePet rules from {agents}")
 
 
 if __name__ == "__main__":
@@ -1071,8 +1071,8 @@ Expected: all tests in `test_avatar_rules.py` pass.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add plugins/codex-avatar/scripts/install_avatar_rules.py plugins/codex-avatar/scripts/uninstall_avatar_rules.py tests/test_avatar_rules.py
-git commit -m "feat: manage codex avatar workspace rules"
+git add plugins/codie-pet/scripts/install_avatar_rules.py plugins/codie-pet/scripts/uninstall_avatar_rules.py tests/test_avatar_rules.py
+git commit -m "feat: manage CodiePet workspace rules"
 ```
 
 Expected: commit succeeds in a valid git repository.
@@ -1098,7 +1098,7 @@ from pathlib import Path
 from test_build_avatar_pack import make_workspace, run_builder
 
 
-VALIDATOR = Path("plugins/codex-avatar/scripts/validate_avatar_pack.py")
+VALIDATOR = Path("plugins/codie-pet/scripts/validate_avatar_pack.py")
 
 
 def run_validator(workspace: Path) -> subprocess.CompletedProcess[str]:
@@ -1125,7 +1125,7 @@ def test_validator_reports_missing_gif(tmp_path: Path) -> None:
     workspace = make_workspace(tmp_path)
     built = run_builder(workspace)
     assert built.returncode == 0, built.stderr
-    (workspace / "codex-avatar" / "gifs" / "done.gif").unlink()
+    (workspace / "codie-pet" / "gifs" / "done.gif").unlink()
 
     result = run_validator(workspace)
 
@@ -1157,11 +1157,11 @@ Expected: commit succeeds in a valid git repository.
 ### Task 9: Implement Avatar Pack Validator
 
 **Files:**
-- Create: `plugins/codex-avatar/scripts/validate_avatar_pack.py`
+- Create: `plugins/codie-pet/scripts/validate_avatar_pack.py`
 
 - [ ] **Step 1: Implement validator script**
 
-Create `plugins/codex-avatar/scripts/validate_avatar_pack.py`:
+Create `plugins/codie-pet/scripts/validate_avatar_pack.py`:
 
 ```python
 #!/usr/bin/env python3
@@ -1177,7 +1177,7 @@ STATES = ("idle", "peek", "loading", "coding", "error", "done")
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Validate a generated Codex Avatar pack.")
+    parser = argparse.ArgumentParser(description="Validate a generated CodiePet pack.")
     parser.add_argument("--workspace", default=".", help="Workspace root. Default: current directory.")
     return parser.parse_args()
 
@@ -1188,7 +1188,7 @@ def error(message: str) -> None:
 
 def validate(workspace: Path) -> list[str]:
     failures: list[str] = []
-    root = workspace / "codex-avatar"
+    root = workspace / "codie-pet"
     for directory in ("frames", "gifs", "previews"):
         if not (root / directory).is_dir():
             failures.append(f"Missing directory: {directory}")
@@ -1261,8 +1261,8 @@ Expected: all tests pass.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add plugins/codex-avatar/scripts/validate_avatar_pack.py tests/test_validate_avatar_pack.py
-git commit -m "feat: validate codex avatar packs"
+git add plugins/codie-pet/scripts/validate_avatar_pack.py tests/test_validate_avatar_pack.py
+git commit -m "feat: validate CodiePet packs"
 ```
 
 Expected: commit succeeds in a valid git repository.
@@ -1279,9 +1279,9 @@ Expected: commit succeeds in a valid git repository.
 Create `README.md`:
 
 ````markdown
-# Codex Avatar
+# CodiePet
 
-Codex Avatar is a local Codex plugin that helps turn one clear single-person photo into a Q-style animated avatar pack for Codex workspace replies.
+CodiePet is a local Codex plugin that helps turn one clear single-person photo into a Q-style animated avatar pack for Codex workspace replies.
 
 ## What v0.1 does
 
@@ -1312,7 +1312,7 @@ Then restart Codex desktop app.
 Open a workspace and ask:
 
 ```text
-Create my Codex avatar from this photo.
+Create my CodiePet from this photo.
 ```
 
 Attach one clear single-person photo. The plugin workflow asks you to approve the Q-style character preview before generating GIFs.
@@ -1322,7 +1322,7 @@ Attach one clear single-person photo. The plugin workflow asks you to approve th
 Generated assets are written under:
 
 ```text
-codex-avatar/
+codie-pet/
   strips/
   frames/
   gifs/
@@ -1330,20 +1330,20 @@ codex-avatar/
   avatar.config.json
 ```
 
-The installer updates only the managed Codex Avatar block in `AGENTS.md`.
+The installer updates only the managed CodiePet block in `AGENTS.md`.
 
 ## Remove avatar behavior
 
 Ask Codex:
 
 ```text
-Remove Codex Avatar from this workspace.
+Remove CodiePet from this workspace.
 ```
 
 Or run:
 
 ```bash
-python3 plugins/codex-avatar/scripts/uninstall_avatar_rules.py --workspace .
+python3 plugins/codie-pet/scripts/uninstall_avatar_rules.py --workspace .
 ```
 
 ## Privacy
@@ -1379,7 +1379,7 @@ Expected: all required topics are found.
 
 ```bash
 git add README.md
-git commit -m "docs: add codex avatar usage guide"
+git commit -m "docs: add CodiePet usage guide"
 ```
 
 Expected: commit succeeds in a valid git repository.
@@ -1401,7 +1401,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 states = ("idle", "peek", "loading", "coding", "error", "done")
-root = Path("/tmp/codex-avatar-e2e/codex-avatar/strips")
+root = Path("/tmp/codie-pet-e2e/codie-pet/strips")
 root.mkdir(parents=True, exist_ok=True)
 for s_index, state in enumerate(states):
     image = Image.new("RGBA", (256, 64), (255, 255, 255, 0))
@@ -1414,24 +1414,24 @@ for s_index, state in enumerate(states):
 PY
 ```
 
-Expected: six strip files exist under `/tmp/codex-avatar-e2e/codex-avatar/strips/`.
+Expected: six strip files exist under `/tmp/codie-pet-e2e/codie-pet/strips/`.
 
 - [ ] **Step 2: Build fixture pack**
 
 Run:
 
 ```bash
-python3 plugins/codex-avatar/scripts/build_avatar_pack.py --workspace /tmp/codex-avatar-e2e
+python3 plugins/codie-pet/scripts/build_avatar_pack.py --workspace /tmp/codie-pet-e2e
 ```
 
-Expected: prints `Built Codex avatar pack at /tmp/codex-avatar-e2e/codex-avatar`.
+Expected: prints `Built CodiePet pack at /tmp/codie-pet-e2e/codie-pet`.
 
 - [ ] **Step 3: Validate fixture pack**
 
 Run:
 
 ```bash
-python3 plugins/codex-avatar/scripts/validate_avatar_pack.py --workspace /tmp/codex-avatar-e2e
+python3 plugins/codie-pet/scripts/validate_avatar_pack.py --workspace /tmp/codie-pet-e2e
 ```
 
 Expected: prints `Avatar pack validation passed`.
@@ -1441,20 +1441,20 @@ Expected: prints `Avatar pack validation passed`.
 Run:
 
 ```bash
-python3 plugins/codex-avatar/scripts/install_avatar_rules.py --workspace /tmp/codex-avatar-e2e
+python3 plugins/codie-pet/scripts/install_avatar_rules.py --workspace /tmp/codie-pet-e2e
 ```
 
-Expected: prints `Installed Codex Avatar rules` and `/tmp/codex-avatar-e2e/AGENTS.md` contains the managed block.
+Expected: prints `Installed CodiePet rules` and `/tmp/codie-pet-e2e/AGENTS.md` contains the managed block.
 
 - [ ] **Step 5: Uninstall rules from fixture workspace**
 
 Run:
 
 ```bash
-python3 plugins/codex-avatar/scripts/uninstall_avatar_rules.py --workspace /tmp/codex-avatar-e2e
+python3 plugins/codie-pet/scripts/uninstall_avatar_rules.py --workspace /tmp/codie-pet-e2e
 ```
 
-Expected: prints `Removed Codex Avatar rules` and the managed block is absent from `/tmp/codex-avatar-e2e/AGENTS.md`.
+Expected: prints `Removed CodiePet rules` and the managed block is absent from `/tmp/codie-pet-e2e/AGENTS.md`.
 
 - [ ] **Step 6: Run all tests again**
 
@@ -1473,7 +1473,7 @@ Run only if previous tasks changed files after their commits:
 ```bash
 git status --short
 git add .
-git commit -m "chore: verify codex avatar plugin workflow"
+git commit -m "chore: verify CodiePet plugin workflow"
 ```
 
 Expected: commit succeeds when there are changes; skip commit if `git status --short` is empty.
@@ -1490,7 +1490,7 @@ Expected: commit succeeds when there are changes; skip commit if `git status --s
 Run:
 
 ```bash
-rg -n "idle|peek|loading|coding|error|done|character preview|single-person|AGENTS.md|cloud" plugins/codex-avatar README.md tests
+rg -n "idle|peek|loading|coding|error|done|character preview|single-person|AGENTS.md|cloud" plugins/codie-pet README.md tests
 ```
 
 Expected: the implementation mentions the six states, character preview workflow, input scope, local workspace rules, and no-cloud boundary.
@@ -1500,8 +1500,8 @@ Expected: the implementation mentions the six states, character preview workflow
 Run:
 
 ```bash
-python3 -m json.tool plugins/codex-avatar/.codex-plugin/plugin.json >/tmp/codex-avatar-plugin-json.out
-python3 -m json.tool .agents/plugins/marketplace.json >/tmp/codex-avatar-marketplace-json.out
+python3 -m json.tool plugins/codie-pet/.codex-plugin/plugin.json >/tmp/codie-pet-plugin-json.out
+python3 -m json.tool .agents/plugins/marketplace.json >/tmp/codie-pet-marketplace-json.out
 ```
 
 Expected: both commands exit 0.
@@ -1521,7 +1521,7 @@ Expected: all tests pass.
 Run:
 
 ```bash
-find plugins/codex-avatar tests docs -maxdepth 5 -type f | sort
+find plugins/codie-pet tests docs -maxdepth 5 -type f | sort
 ```
 
 Expected: the file list includes plugin manifest, skill files, scripts, tests, spec, and plan.

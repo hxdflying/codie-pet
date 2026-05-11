@@ -11,7 +11,7 @@ STATES = ("idle", "peek", "loading", "coding", "error", "done")
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Validate a generated Codex Avatar pack.")
+    parser = argparse.ArgumentParser(description="Validate a generated CodiePet pack.")
     parser.add_argument("--workspace", default=".", help="Workspace root. Default: current directory.")
     return parser.parse_args()
 
@@ -22,7 +22,7 @@ def error(message: str) -> None:
 
 def validate(workspace: Path) -> list[str]:
     failures: list[str] = []
-    root = workspace / "codex-avatar"
+    root = workspace / "codie-pet"
     for directory in ("frames", "gifs", "previews"):
         if not (root / directory).is_dir():
             failures.append(f"Missing directory: {directory}")
@@ -65,7 +65,7 @@ def main() -> None:
         for failure in failures:
             error(failure)
         raise SystemExit(2)
-    print("Avatar pack validation passed")
+    print("CodiePet pack validation passed")
 
 
 if __name__ == "__main__":

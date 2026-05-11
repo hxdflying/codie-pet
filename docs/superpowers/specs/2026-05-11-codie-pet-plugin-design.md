@@ -1,8 +1,8 @@
-# Codex Avatar Plugin v0.1 Design
+# CodiePet Plugin v0.1 Design
 
 ## Summary
 
-Codex Avatar Plugin v0.1 is a local Codex plugin that lets a user turn one clear single-person photo into a Q-style animated avatar pack for Codex chats.
+CodiePet Plugin v0.1 is a local Codex plugin that lets a user turn one clear single-person photo into a Q-style animated avatar pack for Codex chats.
 
 The plugin does not run a cloud service and does not modify the Codex desktop UI. It provides a guided skill workflow, local scripts for deterministic asset processing, and workspace rules that make Codex naturally insert state GIFs in replies.
 
@@ -83,7 +83,7 @@ The plugin should not promise photo-real likeness. It should frame the output as
 
 ```text
 User uploads a single-person photo
-  -> Codex-avatar skill validates the input scope
+  -> CodiePet skill validates the input scope
   -> Codex generates one Q-style character preview
   -> User confirms, regenerates, or adds correction notes
   -> Codex generates six independent state strips
@@ -157,11 +157,11 @@ Each state strip must meet these requirements:
 ## Plugin Package Structure
 
 ```text
-plugins/codex-avatar/
+plugins/codie-pet/
   .codex-plugin/
     plugin.json
   skills/
-    codex-avatar/
+    codie-pet/
       SKILL.md
       references/
         workflow.md
@@ -182,7 +182,7 @@ plugins/codex-avatar/
 The generated avatar pack is stored inside the user's current workspace:
 
 ```text
-codex-avatar/
+codie-pet/
   source/
     original.png
     character-preview.png
@@ -261,21 +261,21 @@ codex-avatar/
 }
 ```
 
-Paths inside `avatar.config.json` are relative to the `codex-avatar/` directory.
+Paths inside `avatar.config.json` are relative to the `codie-pet/` directory.
 
 ## Skill Responsibilities
 
-`skills/codex-avatar/SKILL.md` owns the user-facing workflow.
+`skills/codie-pet/SKILL.md` owns the user-facing workflow.
 
 It should:
 
-- Trigger when the user asks to create, install, regenerate, disable, or remove a Codex avatar.
+- Trigger when the user asks to create, install, regenerate, disable, or remove a CodiePet.
 - Enforce the v0.1 input scope.
 - Ask for a clear single-person photo when no image is provided.
 - Generate the character preview prompt.
 - Require user confirmation before state generation.
 - Generate state strip prompts one state at a time.
-- Tell Codex to save generated strips under `codex-avatar/strips/`.
+- Tell Codex to save generated strips under `codie-pet/strips/`.
 - Run scripts after required assets exist.
 - Explain failures in actionable language.
 - Avoid claiming direct UI injection.
@@ -286,7 +286,7 @@ It should:
 
 Inputs:
 
-- `codex-avatar/strips/*.png`
+- `codie-pet/strips/*.png`
 - Optional state config arguments.
 
 Responsibilities:
@@ -294,8 +294,8 @@ Responsibilities:
 - Verify all six required strip files exist.
 - Slice each horizontal strip into exactly four frames.
 - Normalize frame canvas sizes within each state.
-- Save frames under `codex-avatar/frames/<state>/`.
-- Build looping GIFs under `codex-avatar/gifs/`.
+- Save frames under `codie-pet/frames/<state>/`.
+- Build looping GIFs under `codie-pet/gifs/`.
 - Generate `avatar.config.json`.
 - Generate `previews/contact-sheet.png`.
 - Generate `previews/preview.html`.
@@ -325,7 +325,7 @@ Responsibilities:
 
 - Create `AGENTS.md` if it does not exist.
 - Preserve existing `AGENTS.md` content.
-- Insert or replace only the `codex-avatar` managed block.
+- Insert or replace only the `codie-pet` managed block.
 - Use relative paths from the workspace root.
 - Avoid duplicate blocks.
 
@@ -333,20 +333,20 @@ Responsibilities:
 
 Responsibilities:
 
-- Remove only the `codex-avatar` managed block from `AGENTS.md`.
+- Remove only the `codie-pet` managed block from `AGENTS.md`.
 - Preserve all other `AGENTS.md` content.
 - Leave generated assets in place by default.
-- Support an optional flag to remove the `codex-avatar/` asset directory later if needed.
+- Support an optional flag to remove the `codie-pet/` asset directory later if needed.
 
 ## Managed AGENTS.md Block
 
 The install script writes this managed block:
 
 ```md
-<!-- codex-avatar:start -->
-## Codex Avatar GIF Response Style
+<!-- codie-pet:start -->
+## CodiePet GIF Response Style
 
-Use local avatar GIFs from `./codex-avatar/gifs/` when replying in this workspace.
+Use local avatar GIFs from `./codie-pet/gifs/` when replying in this workspace.
 
 - Use `idle.gif` for general chat, thinking, and lightweight answers.
 - Use `peek.gif` when reading files, inspecting context, or checking previews.
@@ -365,7 +365,7 @@ Selection rules:
 - If several states apply, choose the most active current state.
 - If the user asks to remove, reduce, or change avatar behavior, follow the user.
 - User, system, and developer instructions take priority over these avatar rules.
-<!-- codex-avatar:end -->
+<!-- codie-pet:end -->
 ```
 
 ## Prompt Strategy
@@ -405,7 +405,7 @@ Key constraints:
 - No cropped body parts or props.
 - White or transparent background.
 
-The prompts should live in `skills/codex-avatar/references/prompts.md` so they can be refined without changing script code.
+The prompts should live in `skills/codie-pet/references/prompts.md` so they can be refined without changing script code.
 
 ## Error Handling
 
@@ -459,7 +459,7 @@ Manual workflow verification should cover:
 v0.1 is complete when:
 
 - The plugin manifest is valid.
-- The `codex-avatar` skill triggers for avatar creation and installation requests.
+- The `codie-pet` skill triggers for avatar creation and installation requests.
 - The workflow requires character preview confirmation.
 - The scripts generate six GIFs from six four-frame strips.
 - The workspace output structure matches this design.
@@ -474,4 +474,4 @@ v0.1 is complete when:
 
 - The actual image generation call is handled by Codex's available image generation capability, guided by the skill. Scripts do not call a model API in v0.1.
 - The first implementation can use equal-width slicing for each strip. More advanced object-boundary normalization can be added after the basic workflow is reliable.
-- If Codex cannot save generated images directly into the target paths in a given environment, the skill should ask the user to place the generated files under `codex-avatar/strips/` before running `build_avatar_pack.py`.
+- If Codex cannot save generated images directly into the target paths in a given environment, the skill should ask the user to place the generated files under `codie-pet/strips/` before running `build_avatar_pack.py`.
