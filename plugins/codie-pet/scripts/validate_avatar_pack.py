@@ -20,12 +20,18 @@ def error(message: str) -> None:
     print(message, file=sys.stderr)
 
 
-def validate(workspace: Path) -> list[str]:
+def validate(workspace: Path) -> tuple[list[str], list[str]]:
     failures: list[str] = []
+    warnings: list[str] = []
     root = workspace / "codie-pet"
     for directory in ("frames", "gifs", "previews"):
         if not (root / directory).is_dir():
             failures.append(f"Missing directory: {directory}")
+
+    if not (root / "source" / "character-preview.png").is_file():
+        warnings.append(
+            "Missing source/character-preview.png. Regeneration will need a new preview."
+        )
 
     for state in STATES:
         gif = root / "gifs" / f"{state}.gif"
@@ -55,12 +61,14 @@ def validate(workspace: Path) -> list[str]:
     if not (root / "previews" / "contact-sheet.png").is_file():
         failures.append("Missing contact-sheet.png")
 
-    return failures
+    return failures, warnings
 
 
 def main() -> None:
     args = parse_args()
-    failures = validate(Path(args.workspace).resolve())
+    failures, warnings = validate(Path(args.workspace).resolve())
+    for warning in warnings:
+        print(f"warning: {warning}", file=sys.stderr)
     if failures:
         for failure in failures:
             error(failure)

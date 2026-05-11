@@ -7,12 +7,16 @@ Generated files live under `codie-pet/` in the user's current workspace:
 ```text
 codie-pet/
   source/
+    original.png            # the photo the user attached
+    character-preview.png   # the Q-style preview the user approved
   strips/
   frames/
   gifs/
   previews/
   avatar.config.json
 ```
+
+`source/character-preview.png` is the identity reference for every state strip prompt. The skill must save it only after the user explicitly approves the preview.
 
 ## States
 

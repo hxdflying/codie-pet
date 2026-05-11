@@ -20,7 +20,7 @@ Generate a single full-body character preview image.
 
 ## State strip prompt template
 
-Use the approved character preview as the identity reference. Generate one horizontal four-frame animation strip for state: `<STATE>`.
+Use `codie-pet/source/character-preview.png` (the approved Q-style character preview) as the identity reference. Generate one horizontal four-frame animation strip for state: `<STATE>`.
 
 Hard requirements:
 
