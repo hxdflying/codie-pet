@@ -7,3 +7,5 @@ __pycache__/
 # Local-only files (review notes, source material, drafts)
 *.pdf
 docs/review-*.md
+docs/superpowers/
+.agents/plugins/README.md
