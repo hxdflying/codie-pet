@@ -67,7 +67,11 @@ python3 plugins/codie-pet/scripts/uninstall_avatar_rules.py --workspace .
 
 ## Privacy
 
-v0.1 stores source and generated files locally in the current workspace. It does not add a cloud upload step. Only use photos you have the right to use.
+CodiePet stores the source photo, the approved character preview, the state strips, and all generated GIFs locally inside the current workspace under `codie-pet/`. The plugin itself does not add an additional cloud upload step.
+
+Image generation is performed by Codex's own image-generation capability. That step may send your photo to a cloud-hosted model owned by the Codex provider, subject to that provider's data-handling policy. CodiePet has no control over that path.
+
+Only use photos you have the right to use.
 
 ## Development
 
