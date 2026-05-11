@@ -71,12 +71,26 @@ def test_missing_required_strip_fails_with_clear_message(tmp_path: Path) -> None
     assert "Missing required strip: done.png" in result.stderr
 
 
-def test_non_divisible_strip_width_fails(tmp_path: Path) -> None:
+def test_non_divisible_strip_width_is_trimmed_with_warning(tmp_path: Path) -> None:
     workspace = make_workspace(tmp_path)
     bad = Image.new("RGBA", (130, 32), (255, 255, 255, 0))
     bad.save(workspace / "codie-pet" / "strips" / "idle.png")
 
     result = run_builder(workspace)
 
+    assert result.returncode == 0, result.stderr
+    assert "trimming to 128" in result.stderr
+    frames = sorted((workspace / "codie-pet" / "frames" / "idle").glob("frame-*.png"))
+    assert len(frames) == 4
+    assert Image.open(frames[0]).width == 32
+
+
+def test_strip_smaller_than_four_pixels_fails(tmp_path: Path) -> None:
+    workspace = make_workspace(tmp_path)
+    bad = Image.new("RGBA", (3, 32), (255, 255, 255, 0))
+    bad.save(workspace / "codie-pet" / "strips" / "idle.png")
+
+    result = run_builder(workspace)
+
     assert result.returncode == 2
-    assert "width must be divisible by 4" in result.stderr
+    assert "image is too small" in result.stderr

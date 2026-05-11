@@ -72,10 +72,17 @@ def slice_strip(strip_path: Path, out_dir: Path) -> list[Path]:
     except Exception as exc:
         fail(f"Cannot open strip {strip_path.name}: {exc}")
 
-    if image.width % 4 != 0:
-        fail(f"Invalid strip {strip_path.name}: width must be divisible by 4")
     if image.height < 1 or image.width < 4:
         fail(f"Invalid strip {strip_path.name}: image is too small")
+
+    if image.width % 4 != 0:
+        trimmed_width = image.width - (image.width % 4)
+        print(
+            f"warning: strip {strip_path.name} width {image.width} is not divisible by 4, "
+            f"trimming to {trimmed_width}",
+            file=sys.stderr,
+        )
+        image = image.crop((0, 0, trimmed_width, image.height))
 
     frame_width = image.width // 4
     out_dir.mkdir(parents=True, exist_ok=True)
