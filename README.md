@@ -24,7 +24,7 @@ From this repository:
 codex plugin marketplace add .
 ```
 
-Then restart Codex desktop app.
+Then restart Codex desktop app. If Codex Avatar is not enabled automatically, open the plugin marketplace or plugin settings in the desktop app and install or enable **Codex Avatar** from the **Codex Avatar Local** marketplace.
 
 ## Use in Codex desktop app
 
