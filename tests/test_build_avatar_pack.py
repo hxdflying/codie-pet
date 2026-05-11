@@ -62,3 +62,15 @@ def test_strip_smaller_than_four_pixels_fails(
 
     assert result.returncode == 2
     assert "image is too small" in result.stderr
+
+
+def test_unopenable_strip_fails_with_clear_message(
+    strip_workspace: Path, run_script
+) -> None:
+    bad = strip_workspace / "codie-pet" / "strips" / "idle.png"
+    bad.write_bytes(b"this is not a valid PNG")
+
+    result = run_script("build", strip_workspace)
+
+    assert result.returncode == 2
+    assert "Cannot open strip idle.png" in result.stderr

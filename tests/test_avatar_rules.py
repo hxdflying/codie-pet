@@ -61,3 +61,31 @@ def test_uninstall_removes_only_managed_block(
     assert "<!-- codie-pet:end -->" not in content
     assert "Keep this." in content
     assert "Keep this too." in content
+
+
+def test_uninstall_is_noop_when_no_managed_block_present(
+    tmp_path: Path, run_script
+) -> None:
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    agents = workspace / "AGENTS.md"
+    original = "# Project Rules\n\nKeep this.\n"
+    agents.write_text(original)
+
+    result = run_script("uninstall", workspace)
+
+    assert result.returncode == 0, result.stderr
+    assert agents.read_text() == original
+
+
+def test_uninstall_is_silent_when_agents_file_missing(
+    tmp_path: Path, run_script
+) -> None:
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+
+    result = run_script("uninstall", workspace)
+
+    assert result.returncode == 0, result.stderr
+    assert "No AGENTS.md found" in result.stdout
+    assert not (workspace / "AGENTS.md").exists()
