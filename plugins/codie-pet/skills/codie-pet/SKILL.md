@@ -42,6 +42,25 @@ Do not generate state strips before the user chooses to use the character. Do no
 
 All plugin scripts are under `plugins/codie-pet/scripts/`.
 
+## Recovery
+
+When a step in the required workflow fails, do not restart the full workflow. Narrow the regeneration to the smallest affected unit.
+
+- **No image attached.** Ask the user to attach one clear single-person photo. Do not invent one.
+- **Source image rejected by v0.1 scope checks** (multi-person, pet, object, scenery, back view, heavily blocked face). Explain the v0.1 limits from `references/quality-checks.md` and ask for a replacement photo. Do not proceed.
+- **Character preview rejected by the user.** Offer "Regenerate with same style" or "Regenerate with corrections". Apply the corrections directly to the prompt in `references/prompts.md` and regenerate. Never save `codie-pet/source/character-preview.png` until the user picks option 1.
+- **A single state strip has a defect** (wrong identity, missing frame, body cropped, label or grid line bleeding in). Regenerate only that one state. Replace just `codie-pet/strips/<state>.png` and re-run `build_avatar_pack.py`.
+- **`build_avatar_pack.py` reports `Missing required strip`.** Generate the named state and save it under `codie-pet/strips/`. Re-run.
+- **`build_avatar_pack.py` warns `width is not divisible by 4, trimming to ...`.** This is informational; the builder already trimmed 1-3 stray pixels. Inspect the contact sheet to confirm framing is intact. Regenerate that state only if the trim cropped the character.
+- **`build_avatar_pack.py` reports `image is too small` or `Cannot open strip`.** The strip file is corrupted or below 4 px wide. Regenerate that state only.
+- **`build_avatar_pack.py` reports `Pillow is required`.** Stop. Ask the user to run `python3 -m pip install Pillow` and retry. Do not attempt to install dependencies silently.
+- **`validate_avatar_pack.py` warns about `source/character-preview.png`.** Save the approved preview to that path, then re-run validation. Do not skip the warning.
+- **`validate_avatar_pack.py` reports a `Missing GIF` or wrong frame count.** Re-run `build_avatar_pack.py` after fixing the offending strip; do not edit files under `frames/` or `gifs/` by hand.
+- **`install_avatar_rules.py` cannot write `AGENTS.md`** (permission error). Stop. Tell the user the workspace `AGENTS.md` is not writable and ask them to check file permissions. Do not retry with elevated privileges.
+- **User cancels installation.** Leave the generated assets in place. Do not run the installer. Do not delete `codie-pet/`.
+
+In all cases, stop after a failure rather than chaining new generation attempts. Tell the user exactly which step failed and what the next manual action is.
+
 ## References
 
 - Workflow details: `references/workflow.md`
