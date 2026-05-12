@@ -35,17 +35,15 @@ codie-pet/
    Install https://github.com/hxdflying/codie-pet.git
    ```
 
-2. 如果插件列表没有自动刷新，重启 Codex App。
+   如果插件列表没有自动刷新，重启 Codex App。必要时在插件设置中启用 **CodiePet**。
 
-3. 必要时在插件设置中启用 **CodiePet**。
-
-4. 可选：使用 Codex CLI 安装：
+2. 可选：使用 Codex CLI 安装：
 
    ```bash
    codex plugin marketplace add hxdflying/codie-pet
    ```
 
-5. 可选：本地开发安装：
+3. 可选：本地开发安装：
 
    ```bash
    codex plugin marketplace add .

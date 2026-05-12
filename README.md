@@ -35,17 +35,15 @@ codie-pet/
    Install https://github.com/hxdflying/codie-pet.git
    ```
 
-2. Restart Codex App if the plugin list does not refresh automatically.
+   Then restart Codex App if the plugin list does not refresh automatically. Enable **CodiePet** from plugin settings if needed.
 
-3. Enable **CodiePet** from plugin settings if needed.
-
-4. Optional CLI install:
+2. Optional CLI install:
 
    ```bash
    codex plugin marketplace add hxdflying/codie-pet
    ```
 
-5. Optional local development install:
+3. Optional local development install:
 
    ```bash
    codex plugin marketplace add .
