@@ -1,44 +1,35 @@
 # CodiePet
 
-Turn one clear single-person photo into a Q-style animated avatar pack for Codex workspace replies.
+English | [简体中文](docs/zh-CN/README.md)
 
 <p align="center">
-  <img src="image/coding.gif" alt="CodiePet coding state" width="220">
-  <img src="image/done.gif" alt="CodiePet done state" width="220">
+  <img alt="states: 6" src="https://img.shields.io/badge/states-6-10A37F">
+  <img alt="frames: 24" src="https://img.shields.io/badge/frames-24-0EA5E9">
+  <img alt="languages: en | zh-CN" src="https://img.shields.io/badge/languages-en%20%7C%20zh--CN-64748B">
+  <img alt="runtime: no dependencies" src="https://img.shields.io/badge/runtime-no%20deps-F59E0B">
+  <img alt="license: MIT" src="https://img.shields.io/badge/license-MIT-111827">
 </p>
 
 <p align="center">
-  <strong>A tiny local companion for long Codex tasks.</strong><br>
-  CodiePet generates six workspace-local GIF states, then installs rules so Codex can use them naturally while it works.
+  <img src="image/codie-pet-cover.svg" alt="CodiePet cover">
 </p>
 
-## What It Does
+CodiePet is a local Codex plugin that turns one clear single-person photo into a Q-style animated avatar pack for Codex workspace replies.
 
-- Creates a Q-style character preview from one clear single-person photo.
-- Waits for your approval before generating the full state pack.
-- Builds six local animated GIFs: `idle`, `peek`, `loading`, `coding`, `error`, and `done`.
-- Installs a managed `AGENTS.md` block so Codex knows when to use each state.
-- Keeps generated assets inside the current workspace under `codie-pet/`.
+Each generated pack is small, local, and workspace-scoped:
 
-## State Pack
+```text
+codie-pet/
+  source/      original photo and approved character preview
+  strips/      generated four-frame state strips
+  frames/      sliced PNG frames
+  gifs/        final Codex state GIFs
+  previews/    preview.html and contact-sheet.png
+```
 
-| Idle | Peek | Loading |
-| --- | --- | --- |
-| <img src="image/idle.gif" alt="Idle CodiePet GIF" width="180"> | <img src="image/peek.gif" alt="Peek CodiePet GIF" width="180"> | <img src="image/loading.gif" alt="Loading CodiePet GIF" width="180"> |
-| General chat, thinking, lightweight answers. | Reading files, inspecting context, checking previews. | Running commands, waiting, long tasks. |
+## Quick Install
 
-| Coding | Error | Done |
-| --- | --- | --- |
-| <img src="image/coding.gif" alt="Coding CodiePet GIF" width="180"> | <img src="image/error.gif" alt="Error CodiePet GIF" width="180"> | <img src="image/done.gif" alt="Done CodiePet GIF" width="180"> |
-| Writing code, editing files, generating assets. | Failed commands, failed tests, blocked work. | Successful final results. |
-
-Each state is generated as a four-frame GIF. The current v0.1 pack contains 6 states and 24 total animation frames.
-
-## Install
-
-### From Codex App
-
-Ask Codex App to install this plugin from GitHub:
+Install from Codex App by asking:
 
 ```text
 Install https://github.com/hxdflying/codie-pet.git
@@ -46,13 +37,13 @@ Install https://github.com/hxdflying/codie-pet.git
 
 Then restart Codex App if the plugin list does not refresh automatically. Enable **CodiePet** from plugin settings if needed.
 
-### From Codex CLI
+Install from Codex CLI:
 
 ```bash
 codex plugin marketplace add hxdflying/codie-pet
 ```
 
-For local testing from this repository:
+Local development install:
 
 ```bash
 codex plugin marketplace add .
@@ -60,7 +51,20 @@ codex plugin marketplace add .
 
 CodiePet has no third-party runtime Python package dependency.
 
-## Use
+## State Pack
+
+| Action | Preview | Used When |
+| --- | --- | --- |
+| `idle` | <img src="image/idle.gif" alt="Idle CodiePet GIF" width="120"> | General chat, thinking, lightweight answers. |
+| `peek` | <img src="image/peek.gif" alt="Peek CodiePet GIF" width="120"> | Reading files, inspecting context, checking previews. |
+| `loading` | <img src="image/loading.gif" alt="Loading CodiePet GIF" width="120"> | Running commands, waiting, long tasks. |
+| `coding` | <img src="image/coding.gif" alt="Coding CodiePet GIF" width="120"> | Writing code, editing files, generating assets. |
+| `error` | <img src="image/error.gif" alt="Error CodiePet GIF" width="120"> | Failed commands, failed tests, blocked work. |
+| `done` | <img src="image/done.gif" alt="Done CodiePet GIF" width="120"> | Successful final results. |
+
+Each state is a four-frame GIF. The v0.1 pack contains 6 states and 24 total animation frames.
+
+## Make Your CodiePet
 
 Open a workspace in Codex App and ask:
 
@@ -159,3 +163,7 @@ Validate marketplace metadata:
 python3 -m json.tool .agents/plugins/marketplace.json
 python3 -m json.tool plugins/codie-pet/.codex-plugin/plugin.json
 ```
+
+## License
+
+Code is licensed under [MIT](LICENSE).
