@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="../../image/codie-pet-cover.svg" alt="CodiePet 封面图">
+  <img src="../../image/logo.png" alt="CodiePet 封面图" width="900">
 </p>
 
 CodiePet 是一个本地 Codex 插件，可以把一张清晰的单人照片制作成 Q 版 Codex 工作区状态头像包。
@@ -55,12 +55,12 @@ CodiePet 没有第三方运行时 Python 包依赖。
 
 | 动作 | 预览 | 使用场景 |
 | --- | --- | --- |
-| `idle` | <img src="../../image/idle.gif" alt="CodiePet idle 状态 GIF" width="120"> | 普通聊天、思考、轻量回答。 |
-| `peek` | <img src="../../image/peek.gif" alt="CodiePet peek 状态 GIF" width="120"> | 阅读文件、检查上下文、查看预览。 |
-| `loading` | <img src="../../image/loading.gif" alt="CodiePet loading 状态 GIF" width="120"> | 运行命令、等待结果、长任务处理中。 |
-| `coding` | <img src="../../image/coding.gif" alt="CodiePet coding 状态 GIF" width="120"> | 写代码、编辑文件、生成资源。 |
-| `error` | <img src="../../image/error.gif" alt="CodiePet error 状态 GIF" width="120"> | 命令失败、测试失败、任务被阻塞。 |
-| `done` | <img src="../../image/done.gif" alt="CodiePet done 状态 GIF" width="120"> | 任务完成、结果成功。 |
+| `idle` | <img src="../../image/idle.gif" alt="CodiePet idle 状态 GIF" width="96"> | 普通聊天、思考、轻量回答。 |
+| `peek` | <img src="../../image/peek.gif" alt="CodiePet peek 状态 GIF" width="96"> | 阅读文件、检查上下文、查看预览。 |
+| `loading` | <img src="../../image/loading.gif" alt="CodiePet loading 状态 GIF" width="96"> | 运行命令、等待结果、长任务处理中。 |
+| `coding` | <img src="../../image/coding.gif" alt="CodiePet coding 状态 GIF" width="96"> | 写代码、编辑文件、生成资源。 |
+| `error` | <img src="../../image/error.gif" alt="CodiePet error 状态 GIF" width="96"> | 命令失败、测试失败、任务被阻塞。 |
+| `done` | <img src="../../image/done.gif" alt="CodiePet done 状态 GIF" width="96"> | 任务完成、结果成功。 |
 
 每个状态都是一个四帧 GIF。当前 v0.1 包含 6 个状态，共 24 张动作帧。
 

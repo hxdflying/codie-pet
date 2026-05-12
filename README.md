@@ -11,7 +11,7 @@ English | [简体中文](docs/zh-CN/README.md)
 </p>
 
 <p align="center">
-  <img src="image/codie-pet-cover.svg" alt="CodiePet cover">
+  <img src="image/logo.png" alt="CodiePet cover" width="900">
 </p>
 
 CodiePet is a local Codex plugin that turns one clear single-person photo into a Q-style animated avatar pack for Codex workspace replies.
@@ -55,12 +55,12 @@ CodiePet has no third-party runtime Python package dependency.
 
 | Action | Preview | Used When |
 | --- | --- | --- |
-| `idle` | <img src="image/idle.gif" alt="Idle CodiePet GIF" width="120"> | General chat, thinking, lightweight answers. |
-| `peek` | <img src="image/peek.gif" alt="Peek CodiePet GIF" width="120"> | Reading files, inspecting context, checking previews. |
-| `loading` | <img src="image/loading.gif" alt="Loading CodiePet GIF" width="120"> | Running commands, waiting, long tasks. |
-| `coding` | <img src="image/coding.gif" alt="Coding CodiePet GIF" width="120"> | Writing code, editing files, generating assets. |
-| `error` | <img src="image/error.gif" alt="Error CodiePet GIF" width="120"> | Failed commands, failed tests, blocked work. |
-| `done` | <img src="image/done.gif" alt="Done CodiePet GIF" width="120"> | Successful final results. |
+| `idle` | <img src="image/idle.gif" alt="Idle CodiePet GIF" width="96"> | General chat, thinking, lightweight answers. |
+| `peek` | <img src="image/peek.gif" alt="Peek CodiePet GIF" width="96"> | Reading files, inspecting context, checking previews. |
+| `loading` | <img src="image/loading.gif" alt="Loading CodiePet GIF" width="96"> | Running commands, waiting, long tasks. |
+| `coding` | <img src="image/coding.gif" alt="Coding CodiePet GIF" width="96"> | Writing code, editing files, generating assets. |
+| `error` | <img src="image/error.gif" alt="Error CodiePet GIF" width="96"> | Failed commands, failed tests, blocked work. |
+| `done` | <img src="image/done.gif" alt="Done CodiePet GIF" width="96"> | Successful final results. |
 
 Each state is a four-frame GIF. The v0.1 pack contains 6 states and 24 total animation frames.
 
