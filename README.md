@@ -29,25 +29,27 @@ codie-pet/
 
 ## Quick Install
 
-Install from Codex App by asking:
+1. Install from Codex App by asking:
 
-```text
-Install https://github.com/hxdflying/codie-pet.git
-```
+   ```text
+   Install https://github.com/hxdflying/codie-pet.git
+   ```
 
-Then restart Codex App if the plugin list does not refresh automatically. Enable **CodiePet** from plugin settings if needed.
+2. Restart Codex App if the plugin list does not refresh automatically.
 
-Install from Codex CLI:
+3. Enable **CodiePet** from plugin settings if needed.
 
-```bash
-codex plugin marketplace add hxdflying/codie-pet
-```
+4. Optional CLI install:
 
-Local development install:
+   ```bash
+   codex plugin marketplace add hxdflying/codie-pet
+   ```
 
-```bash
-codex plugin marketplace add .
-```
+5. Optional local development install:
+
+   ```bash
+   codex plugin marketplace add .
+   ```
 
 CodiePet has no third-party runtime Python package dependency.
 

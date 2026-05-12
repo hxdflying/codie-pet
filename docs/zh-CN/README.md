@@ -29,25 +29,27 @@ codie-pet/
 
 ## 快速安装
 
-在 Codex App 中直接让 Codex 安装：
+1. 在 Codex App 中直接让 Codex 安装：
 
-```text
-Install https://github.com/hxdflying/codie-pet.git
-```
+   ```text
+   Install https://github.com/hxdflying/codie-pet.git
+   ```
 
-如果插件列表没有自动刷新，重启 Codex App。必要时在插件设置中启用 **CodiePet**。
+2. 如果插件列表没有自动刷新，重启 Codex App。
 
-使用 Codex CLI 安装：
+3. 必要时在插件设置中启用 **CodiePet**。
 
-```bash
-codex plugin marketplace add hxdflying/codie-pet
-```
+4. 可选：使用 Codex CLI 安装：
 
-本地开发安装：
+   ```bash
+   codex plugin marketplace add hxdflying/codie-pet
+   ```
 
-```bash
-codex plugin marketplace add .
-```
+5. 可选：本地开发安装：
+
+   ```bash
+   codex plugin marketplace add .
+   ```
 
 CodiePet 没有第三方运行时 Python 包依赖。
 
