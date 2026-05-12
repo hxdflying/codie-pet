@@ -311,7 +311,7 @@ def _lzw_encode(indexes: bytes, min_code_size: int) -> bytes:
         if next_code < 4096:
             dictionary[candidate] = next_code
             next_code += 1
-            if next_code == (1 << code_size) and code_size < 12:
+            if next_code > (1 << code_size) and code_size < 12:
                 code_size += 1
         else:
             writer.write(clear_code, code_size)
@@ -345,6 +345,28 @@ class _BitWriter:
         return bytes(self._out)
 
 
+class _BitReader:
+    def __init__(self, data: bytes) -> None:
+        self._data = data
+        self._cursor = 0
+        self._bits = 0
+        self._bit_count = 0
+
+    def read(self, size: int) -> int | None:
+        while self._bit_count < size:
+            if self._cursor >= len(self._data):
+                return None
+            self._bits |= self._data[self._cursor] << self._bit_count
+            self._cursor += 1
+            self._bit_count += 8
+
+        mask = (1 << size) - 1
+        code = self._bits & mask
+        self._bits >>= size
+        self._bit_count -= size
+        return code
+
+
 def inspect_gif(path: Path) -> tuple[tuple[int, int], int]:
     data = path.read_bytes()
     if not (data.startswith(b"GIF87a") or data.startswith(b"GIF89a")):
@@ -373,12 +395,31 @@ def inspect_gif(path: Path) -> tuple[tuple[int, int], int]:
             offset += 9
             if image_packed & 0x80:
                 offset += 3 * (2 ** ((image_packed & 0x07) + 1))
+            if offset >= len(data):
+                raise ValueError("truncated GIF image data")
+            min_code_size = data[offset]
             offset += 1
-            offset = _skip_sub_blocks(data, offset)
+            image_data, offset = _read_sub_blocks(data, offset)
+            _validate_gif_lzw(image_data, min_code_size, frame_w * frame_h)
             frame_count += 1
         else:
             raise ValueError(f"unexpected GIF block marker 0x{marker:02x}")
     raise ValueError("missing GIF trailer")
+
+
+def _read_sub_blocks(data: bytes, offset: int) -> tuple[bytes, int]:
+    blocks = bytearray()
+    while True:
+        if offset >= len(data):
+            raise ValueError("truncated GIF sub-block")
+        length = data[offset]
+        offset += 1
+        if length == 0:
+            return bytes(blocks), offset
+        if offset + length > len(data):
+            raise ValueError("truncated GIF sub-block")
+        blocks.extend(data[offset : offset + length])
+        offset += length
 
 
 def _skip_sub_blocks(data: bytes, offset: int) -> int:
@@ -389,4 +430,63 @@ def _skip_sub_blocks(data: bytes, offset: int) -> int:
         offset += 1
         if length == 0:
             return offset
+        if offset + length > len(data):
+            raise ValueError("truncated GIF sub-block")
         offset += length
+
+
+def _validate_gif_lzw(data: bytes, min_code_size: int, expected_pixels: int) -> None:
+    if min_code_size < 2 or min_code_size > 8:
+        raise ValueError(f"unsupported GIF LZW minimum code size {min_code_size}")
+    clear_code = 1 << min_code_size
+    end_code = clear_code + 1
+    reader = _BitReader(data)
+
+    dictionary: dict[int, bytes]
+    next_code: int
+    code_size: int
+
+    def reset_dictionary() -> None:
+        nonlocal dictionary, next_code, code_size
+        dictionary = {index: bytes((index,)) for index in range(clear_code)}
+        next_code = end_code + 1
+        code_size = min_code_size + 1
+
+    reset_dictionary()
+    previous: bytes | None = None
+    decoded_pixels = 0
+
+    while True:
+        code = reader.read(code_size)
+        if code is None:
+            raise ValueError("missing GIF LZW end code")
+        if code == clear_code:
+            reset_dictionary()
+            previous = None
+            continue
+        if code == end_code:
+            break
+
+        if code in dictionary:
+            entry = dictionary[code]
+        elif code == next_code and previous is not None:
+            entry = previous + previous[:1]
+        else:
+            raise ValueError(f"invalid GIF LZW code {code}")
+
+        decoded_pixels += len(entry)
+        if decoded_pixels > expected_pixels:
+            raise ValueError("GIF LZW decoded too many pixels")
+
+        if previous is not None and next_code < 4096:
+            dictionary[next_code] = previous + entry[:1]
+            next_code += 1
+            if next_code == (1 << code_size) and code_size < 12:
+                code_size += 1
+
+        previous = entry
+
+    if decoded_pixels != expected_pixels:
+        raise ValueError(
+            f"GIF LZW decoded {decoded_pixels} pixels, expected {expected_pixels}"
+        )

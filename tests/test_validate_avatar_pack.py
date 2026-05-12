@@ -6,8 +6,60 @@ from pathlib import Path
 from PIL import Image
 
 
+def _first_lzw_min_code_size_offset(data: bytes) -> int:
+    offset = 13
+    packed = data[10]
+    if packed & 0x80:
+        offset += 3 * (2 ** ((packed & 0x07) + 1))
+    while offset < len(data):
+        marker = data[offset]
+        offset += 1
+        if marker == 0x21:
+            offset += 1
+            while True:
+                block_length = data[offset]
+                offset += 1
+                if block_length == 0:
+                    break
+                offset += block_length
+        elif marker == 0x2C:
+            return offset + 9
+        elif marker == 0x3B:
+            break
+        else:
+            raise ValueError(f"unexpected GIF marker 0x{marker:02x}")
+    raise ValueError("GIF has no image descriptor")
+
+
 def test_validator_passes_for_built_pack(built_workspace: Path, run_script) -> None:
     result = run_script("validate", built_workspace)
+
+    assert result.returncode == 0, result.stderr
+    assert "CodiePet pack validation passed" in result.stdout
+
+
+def test_validator_passes_for_complex_built_gifs(
+    strip_workspace: Path, run_script, states
+) -> None:
+    root = strip_workspace / "codie-pet"
+    for state in states:
+        image = Image.new("RGBA", (64 * 4, 64), (255, 255, 255, 255))
+        pixels = image.load()
+        for frame_index in range(4):
+            for y in range(64):
+                for x in range(64):
+                    pixels[frame_index * 64 + x, y] = (
+                        (x + y + frame_index * 37) % 256,
+                        (x * 3 + frame_index * 29) % 256,
+                        (y * 5 + frame_index * 13) % 256,
+                        255,
+                    )
+        image.save(root / "strips" / f"{state}.png")
+
+    build = run_script("build", strip_workspace)
+    assert build.returncode == 0, build.stderr
+
+    result = run_script("validate", strip_workspace)
 
     assert result.returncode == 0, result.stderr
     assert "CodiePet pack validation passed" in result.stdout
@@ -80,6 +132,21 @@ def test_validator_reports_corrupt_gif(
 
     assert result.returncode == 2
     assert "Invalid GIF: idle.gif" in result.stderr
+
+
+def test_validator_reports_undecodable_gif_lzw_data(
+    built_workspace: Path, run_script
+) -> None:
+    gif = built_workspace / "codie-pet" / "gifs" / "idle.gif"
+    data = bytearray(gif.read_bytes())
+    data[_first_lzw_min_code_size_offset(data)] = 12
+    gif.write_bytes(data)
+
+    result = run_script("validate", built_workspace)
+
+    assert result.returncode == 2
+    assert "Invalid GIF: idle.gif" in result.stderr
+    assert "LZW" in result.stderr
 
 
 def test_validator_reports_gif_with_wrong_frame_count(

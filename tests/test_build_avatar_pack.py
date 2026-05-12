@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageSequence
 
 
 def test_builds_gifs_frames_config_and_previews(
@@ -24,6 +24,36 @@ def test_builds_gifs_frames_config_and_previews(
     assert set(config["states"]) == set(states)
     assert (root / "previews" / "contact-sheet.png").is_file()
     assert (root / "previews" / "preview.html").is_file()
+
+
+def test_build_writes_gifs_that_decode_for_complex_frames(
+    strip_workspace: Path, run_script, states
+) -> None:
+    root = strip_workspace / "codie-pet"
+    for state in states:
+        image = Image.new("RGBA", (64 * 4, 64), (255, 255, 255, 255))
+        pixels = image.load()
+        for frame_index in range(4):
+            for y in range(64):
+                for x in range(64):
+                    pixels[frame_index * 64 + x, y] = (
+                        (x + y + frame_index * 37) % 256,
+                        (x * 3 + frame_index * 29) % 256,
+                        (y * 5 + frame_index * 13) % 256,
+                        255,
+                    )
+        image.save(root / "strips" / f"{state}.png")
+
+    result = run_script("build", strip_workspace)
+
+    assert result.returncode == 0, result.stderr
+    for state in states:
+        with Image.open(root / "gifs" / f"{state}.gif") as gif:
+            decoded_sizes = []
+            for frame in ImageSequence.Iterator(gif):
+                frame.load()
+                decoded_sizes.append(frame.size)
+        assert decoded_sizes == [(64, 64)] * 4
 
 
 def test_missing_required_strip_fails_with_clear_message(
