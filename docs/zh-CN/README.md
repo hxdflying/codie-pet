@@ -139,7 +139,7 @@ python3 /path/to/installed/codie-pet/scripts/uninstall_avatar_rules.py --workspa
 
 CodiePet 会把原图、已确认的角色预览、状态条带图、拆分帧和 GIF 都保存在当前工作区的 `codie-pet/` 目录下。
 
-插件脚本不会额外增加上传步骤。图像生成由 Codex 自身的图像生成能力完成，该步骤可能使用 Codex 提供方控制的云端模型。请只使用你有权使用的照片。
+插件脚本不会额外增加上传步骤。图像生成由 Codex 自身的图像生成能力完成，该步骤可能使用云端 GPT Image 模型，或由 Codex 提供方选择的其他模型。CodiePet 不会指定或强制使用某个具体生图模型。请只使用你有权使用的照片。
 
 查看 [隐私说明](../privacy.md) 和 [服务条款](../terms.md)。
 
