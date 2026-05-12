@@ -1,62 +1,84 @@
 # CodiePet
 
-CodiePet is a local Codex plugin that helps turn one clear single-person photo into a Q-style animated avatar pack for Codex workspace replies.
+Turn one clear single-person photo into a Q-style animated avatar pack for Codex workspace replies.
 
-## What v0.1 does
+<p align="center">
+  <img src="image/coding.gif" alt="CodiePet coding state" width="220">
+  <img src="image/done.gif" alt="CodiePet done state" width="220">
+</p>
 
-- Guides Codex through creating a Q-style character preview.
-- Requires the user to approve the preview before generating state GIFs.
-- Builds six local state GIFs: `idle`, `peek`, `loading`, `coding`, `error`, `done`.
-- Installs workspace-local `AGENTS.md` rules so Codex can use the GIFs naturally in replies.
+<p align="center">
+  <strong>A tiny local companion for long Codex tasks.</strong><br>
+  CodiePet generates six workspace-local GIF states, then installs rules so Codex can use them naturally while it works.
+</p>
 
-## What v0.1 does not do
+## What It Does
 
-- The plugin scripts do not add an extra upload step. Codex image generation may still use a cloud-hosted model.
-- It does not modify the Codex desktop app UI.
-- It does not create a floating desktop pet overlay.
-- It does not support multi-person photos, pets, objects, scenery, or custom visual styles.
+- Creates a Q-style character preview from one clear single-person photo.
+- Waits for your approval before generating the full state pack.
+- Builds six local animated GIFs: `idle`, `peek`, `loading`, `coding`, `error`, and `done`.
+- Installs a managed `AGENTS.md` block so Codex knows when to use each state.
+- Keeps generated assets inside the current workspace under `codie-pet/`.
 
-## Install from GitHub
+## State Pack
+
+| Idle | Peek | Loading |
+| --- | --- | --- |
+| <img src="image/idle.gif" alt="Idle CodiePet GIF" width="180"> | <img src="image/peek.gif" alt="Peek CodiePet GIF" width="180"> | <img src="image/loading.gif" alt="Loading CodiePet GIF" width="180"> |
+| General chat, thinking, lightweight answers. | Reading files, inspecting context, checking previews. | Running commands, waiting, long tasks. |
+
+| Coding | Error | Done |
+| --- | --- | --- |
+| <img src="image/coding.gif" alt="Coding CodiePet GIF" width="180"> | <img src="image/error.gif" alt="Error CodiePet GIF" width="180"> | <img src="image/done.gif" alt="Done CodiePet GIF" width="180"> |
+| Writing code, editing files, generating assets. | Failed commands, failed tests, blocked work. | Successful final results. |
+
+Each state is generated as a four-frame GIF. The current v0.1 pack contains 6 states and 24 total animation frames.
+
+## Install
+
+### From Codex App
+
+Ask Codex App to install this plugin from GitHub:
+
+```text
+Install https://github.com/hxdflying/codie-pet.git
+```
+
+Then restart Codex App if the plugin list does not refresh automatically. Enable **CodiePet** from plugin settings if needed.
+
+### From Codex CLI
 
 ```bash
 codex plugin marketplace add hxdflying/codie-pet
 ```
 
-For a pinned release:
-
-```bash
-codex plugin marketplace add hxdflying/codie-pet@v0.1.0
-```
-
-Then restart Codex desktop app. If CodiePet is not enabled automatically, open the plugin marketplace or plugin settings in the desktop app and install or enable **CodiePet**.
-
-CodiePet has no third-party runtime Python package dependency.
-
-## Install for local testing
-
-From this repository:
+For local testing from this repository:
 
 ```bash
 codex plugin marketplace add .
 ```
 
-Then restart Codex desktop app. If CodiePet is not enabled automatically, open the plugin marketplace or plugin settings in the desktop app and install or enable **CodiePet** from the **CodiePet** marketplace.
+CodiePet has no third-party runtime Python package dependency.
 
-Marketplace metadata assumptions are documented in `docs/marketplace.md`.
+## Use
 
-## Use in Codex desktop app
-
-Open a workspace and ask:
+Open a workspace in Codex App and ask:
 
 ```text
 Create my CodiePet from this photo.
 ```
 
-Attach one clear single-person photo. The plugin workflow asks you to approve the Q-style character preview before generating GIFs.
+Attach one clear single-person photo. CodiePet will:
 
-## Generated workspace files
+1. Save the source photo locally.
+2. Generate one Q-style character preview.
+3. Ask you to approve the preview.
+4. Generate the six GIF states after approval.
+5. Validate the pack and offer to install workspace rules.
 
-Generated assets are written under:
+## Generated Files
+
+Generated assets are written inside the current workspace:
 
 ```text
 codie-pet/
@@ -64,15 +86,38 @@ codie-pet/
     original.png
     character-preview.png
   strips/
+    idle.png
+    peek.png
+    loading.png
+    coding.png
+    error.png
+    done.png
   frames/
   gifs/
+    idle.gif
+    peek.gif
+    loading.gif
+    coding.gif
+    error.gif
+    done.gif
   previews/
+    contact-sheet.png
+    preview.html
   avatar.config.json
 ```
 
 The installer updates only the managed CodiePet block in `AGENTS.md`.
 
-## Remove CodiePet behavior
+## Scope
+
+CodiePet v0.1 is intentionally narrow:
+
+- It supports one clear single-person human photo.
+- It does not support multi-person photos, pets, objects, scenery, logos, or custom visual styles.
+- It does not modify the Codex desktop app UI.
+- It does not create a floating desktop pet overlay.
+
+## Remove
 
 Ask Codex:
 
@@ -80,7 +125,7 @@ Ask Codex:
 Remove CodiePet from this workspace.
 ```
 
-Or run:
+Or run the installed uninstall script:
 
 ```bash
 python3 /path/to/installed/codie-pet/scripts/uninstall_avatar_rules.py --workspace .
@@ -88,13 +133,11 @@ python3 /path/to/installed/codie-pet/scripts/uninstall_avatar_rules.py --workspa
 
 ## Privacy
 
-CodiePet stores the source photo, the approved character preview, the state strips, and all generated GIFs locally inside the current workspace under `codie-pet/`. The plugin scripts do not add an additional cloud upload step.
+CodiePet stores the source photo, approved character preview, state strips, frames, and GIFs locally inside the current workspace under `codie-pet/`.
 
-Image generation is performed by Codex's own image-generation capability. That step may send your photo to a cloud-hosted model owned by the Codex provider, subject to that provider's data-handling policy. CodiePet has no control over that path.
+The plugin scripts do not add an additional upload step. Image generation is performed by Codex's own image-generation capability, which may use a cloud-hosted model controlled by the Codex provider. Only use photos you have the right to use.
 
-Only use photos you have the right to use.
-
-See `docs/privacy.md` and `docs/terms.md` for the plugin metadata policy links.
+See [privacy](docs/privacy.md) and [terms](docs/terms.md) for plugin metadata policy links.
 
 ## Development
 
@@ -108,4 +151,11 @@ Run tests:
 
 ```bash
 python3 -m pytest tests -q
+```
+
+Validate marketplace metadata:
+
+```bash
+python3 -m json.tool .agents/plugins/marketplace.json
+python3 -m json.tool plugins/codie-pet/.codex-plugin/plugin.json
 ```
