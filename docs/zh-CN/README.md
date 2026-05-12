@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="../../image/logo.png" alt="CodiePet 封面图" width="900">
+  <img src="../../image/logo.png" alt="CodiePet 封面图" width="450">
 </p>
 
 CodiePet 是一个本地 Codex 插件，可以把一张清晰的单人照片制作成 Q 版 Codex 工作区状态头像包。

@@ -11,7 +11,7 @@ English | [简体中文](docs/zh-CN/README.md)
 </p>
 
 <p align="center">
-  <img src="image/logo.png" alt="CodiePet cover" width="900">
+  <img src="image/logo.png" alt="CodiePet cover" width="450">
 </p>
 
 CodiePet is a local Codex plugin that turns one clear single-person photo into a Q-style animated avatar pack for Codex workspace replies.
