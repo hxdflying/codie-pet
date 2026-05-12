@@ -1,1 +1,1 @@
-Pillow>=10.0.0
+# No third-party runtime packages are required.

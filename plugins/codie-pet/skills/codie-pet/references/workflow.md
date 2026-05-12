@@ -29,26 +29,28 @@ codie-pet/
 
 ## Local commands
 
+Resolve script paths relative to the installed plugin root. Do not assume the user's current workspace contains the plugin repository. Use `python3` on macOS/Linux and `py` on Windows.
+
 Build the pack:
 
 ```bash
-python3 plugins/codie-pet/scripts/build_avatar_pack.py --workspace .
+python3 <installed plugin root>/scripts/build_avatar_pack.py --workspace <current workspace>
 ```
 
 Validate the pack:
 
 ```bash
-python3 plugins/codie-pet/scripts/validate_avatar_pack.py --workspace .
+python3 <installed plugin root>/scripts/validate_avatar_pack.py --workspace <current workspace>
 ```
 
 Install workspace rules:
 
 ```bash
-python3 plugins/codie-pet/scripts/install_avatar_rules.py --workspace .
+python3 <installed plugin root>/scripts/install_avatar_rules.py --workspace <current workspace>
 ```
 
 Remove workspace rules:
 
 ```bash
-python3 plugins/codie-pet/scripts/uninstall_avatar_rules.py --workspace .
+python3 <installed plugin root>/scripts/uninstall_avatar_rules.py --workspace <current workspace>
 ```

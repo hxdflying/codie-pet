@@ -7,29 +7,15 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-try:
-    from PIL import Image, ImageDraw, ImageFont
-except ImportError as exc:
-    raise SystemExit("Pillow is required. Install it with `python3 -m pip install Pillow`.") from exc
-
-
-LABEL_FONT_CANDIDATES = (
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-    "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-    "C:\\Windows\\Fonts\\arialbd.ttf",
+from avatar_image import (
+    RgbaImage,
+    new_rgba,
+    pad_to_canvas,
+    paste_rgba,
+    read_png,
+    write_gif,
+    write_png,
 )
-
-
-def load_label_font(size: int = 16) -> ImageFont.ImageFont:
-    for path in LABEL_FONT_CANDIDATES:
-        try:
-            return ImageFont.truetype(path, size)
-        except OSError:
-            continue
-    try:
-        return ImageFont.load_default(size=size)
-    except TypeError:
-        return ImageFont.load_default()
 
 
 STATES = ("idle", "peek", "loading", "coding", "error", "done")
@@ -92,7 +78,7 @@ def require_strips(paths: Paths) -> None:
 
 def slice_strip(strip_path: Path, out_dir: Path) -> list[Path]:
     try:
-        image = Image.open(strip_path).convert("RGBA")
+        image = read_png(strip_path)
     except Exception as exc:
         fail(f"Cannot open strip {strip_path.name}: {exc}")
 
@@ -119,48 +105,29 @@ def slice_strip(strip_path: Path, out_dir: Path) -> list[Path]:
         left = index * frame_width
         frame = image.crop((left, 0, left + frame_width, image.height))
         frame_path = out_dir / f"frame-{index + 1:02d}.png"
-        frame.save(frame_path)
+        write_png(frame_path, frame)
         frame_paths.append(frame_path)
     return frame_paths
 
 
 def build_gif(frame_paths: list[Path], gif_path: Path, duration: int) -> None:
-    flattened: list[Image.Image] = []
-    for path in frame_paths:
-        rgba = Image.open(path).convert("RGBA")
-        background = Image.new("RGB", rgba.size, "white")
-        background.paste(rgba, mask=rgba.split()[3])
-        flattened.append(background)
-    gif_path.parent.mkdir(parents=True, exist_ok=True)
-    flattened[0].save(
-        gif_path,
-        save_all=True,
-        append_images=flattened[1:],
-        duration=duration,
-        loop=0,
-        optimize=True,
-    )
+    write_gif(gif_path, [read_png(path) for path in frame_paths], duration)
 
 
 def normalize_frames(frame_paths: list[Path], canvas_size: tuple[int, int]) -> None:
-    canvas_w, canvas_h = canvas_size
     for path in frame_paths:
-        rgba = Image.open(path).convert("RGBA")
-        if rgba.width > canvas_w or rgba.height > canvas_h:
+        rgba = read_png(path)
+        if rgba.width > canvas_size[0] or rgba.height > canvas_size[1]:
             fail(f"Frame {path} is larger than the target canvas")
-        background = Image.new("RGBA", canvas_size, (255, 255, 255, 255))
-        x = (canvas_w - rgba.width) // 2
-        y = (canvas_h - rgba.height) // 2
-        background.paste(rgba, (x, y), mask=rgba.split()[3])
-        background.save(path)
+        write_png(path, pad_to_canvas(rgba, canvas_size))
 
 
 def target_canvas_size(all_frame_paths: dict[str, list[Path]]) -> tuple[int, int]:
     sizes = []
     for frame_paths in all_frame_paths.values():
         for frame_path in frame_paths:
-            with Image.open(frame_path) as image:
-                sizes.append(image.size)
+            image = read_png(frame_path)
+            sizes.append((image.width, image.height))
     return max(width for width, _ in sizes), max(height for _, height in sizes)
 
 
@@ -184,41 +151,29 @@ def write_config(paths: Paths, durations: dict[str, int]) -> None:
 
 
 def render_contact_sheet(paths: Paths) -> None:
-    gif_cells = []
+    gif_cells: list[tuple[str, RgbaImage]] = []
     for state in STATES:
-        frame = Image.open(paths.frames / state / "frame-01.png").convert("RGBA")
+        frame = read_png(paths.frames / state / "frame-01.png")
         gif_cells.append((state, frame))
 
     cell_w = max(image.width for _, image in gif_cells)
     cell_h = max(image.height for _, image in gif_cells)
-    label_h = 22
     gap = 12
     columns = 3
     rows = 2
     width = columns * cell_w + (columns + 1) * gap
-    height = rows * (cell_h + label_h) + (rows + 1) * gap
-    sheet = Image.new("RGBA", (width, height), "white")
-    draw = ImageDraw.Draw(sheet)
-    font = load_label_font(16)
+    height = rows * cell_h + (rows + 1) * gap
+    sheet = bytearray(new_rgba(width, height, (255, 255, 255, 255)).pixels)
 
     for index, (state, image) in enumerate(gif_cells):
         row = index // columns
         col = index % columns
         x = gap + col * (cell_w + gap)
-        y = gap + row * (cell_h + label_h + gap)
-        bbox = draw.textbbox((0, 0), state, font=font)
-        text_w = bbox[2] - bbox[0]
-        text_h = bbox[3] - bbox[1]
-        draw.text(
-            (x + (cell_w - text_w) // 2, y + (label_h - text_h) // 2 - bbox[1]),
-            state,
-            fill="black",
-            font=font,
-        )
-        sheet.alpha_composite(image, (x + (cell_w - image.width) // 2, y + label_h))
+        y = gap + row * (cell_h + gap)
+        paste_rgba(sheet, width, image, x + (cell_w - image.width) // 2, y)
 
     paths.previews.mkdir(parents=True, exist_ok=True)
-    sheet.save(paths.previews / "contact-sheet.png")
+    write_png(paths.previews / "contact-sheet.png", RgbaImage(width, height, bytes(sheet)))
 
 
 def write_preview_html(paths: Paths) -> None:

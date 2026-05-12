@@ -7,6 +7,7 @@ The marketplace and plugin manifest shapes follow the local Codex `plugin-creato
 Current assumptions:
 
 - `marketplace.json` lives at `<repo-root>/.agents/plugins/marketplace.json`.
+- The marketplace name is `codie-pet`, so upgrades use `codex plugin marketplace upgrade codie-pet`.
 - `plugins[].source.path` is relative to the marketplace root and points to `./plugins/codie-pet`.
 - `policy.installation` accepts `NOT_AVAILABLE`, `AVAILABLE`, or `INSTALLED_BY_DEFAULT`.
 - `policy.authentication` accepts `ON_INSTALL` or `ON_USE`.

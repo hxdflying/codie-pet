@@ -16,16 +16,31 @@ CodiePet is a local Codex plugin that helps turn one clear single-person photo i
 - It does not create a floating desktop pet overlay.
 - It does not support multi-person photos, pets, objects, scenery, or custom visual styles.
 
+## Install from GitHub
+
+```bash
+codex plugin marketplace add hxdflying/codie-pet
+```
+
+For a pinned release:
+
+```bash
+codex plugin marketplace add hxdflying/codie-pet@v0.1.0
+```
+
+Then restart Codex desktop app. If CodiePet is not enabled automatically, open the plugin marketplace or plugin settings in the desktop app and install or enable **CodiePet**.
+
+CodiePet has no third-party runtime Python package dependency.
+
 ## Install for local testing
 
 From this repository:
 
 ```bash
-python3 -m pip install -r requirements.txt
 codex plugin marketplace add .
 ```
 
-Then restart Codex desktop app. If CodiePet is not enabled automatically, open the plugin marketplace or plugin settings in the desktop app and install or enable **CodiePet** from the **CodiePet Local** marketplace.
+Then restart Codex desktop app. If CodiePet is not enabled automatically, open the plugin marketplace or plugin settings in the desktop app and install or enable **CodiePet** from the **CodiePet** marketplace.
 
 Marketplace metadata assumptions are documented in `docs/marketplace.md`.
 
@@ -68,7 +83,7 @@ Remove CodiePet from this workspace.
 Or run:
 
 ```bash
-python3 plugins/codie-pet/scripts/uninstall_avatar_rules.py --workspace .
+python3 /path/to/installed/codie-pet/scripts/uninstall_avatar_rules.py --workspace .
 ```
 
 ## Privacy

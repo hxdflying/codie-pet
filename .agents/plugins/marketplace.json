@@ -1,7 +1,7 @@
 {
-  "name": "codie-pet-local",
+  "name": "codie-pet",
   "interface": {
-    "displayName": "CodiePet Local"
+    "displayName": "CodiePet"
   },
   "plugins": [
     {

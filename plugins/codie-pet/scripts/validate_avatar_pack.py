@@ -6,10 +6,7 @@ import json
 import sys
 from pathlib import Path
 
-try:
-    from PIL import Image, ImageSequence
-except ImportError as exc:
-    raise SystemExit("Pillow is required. Install it with `python3 -m pip install Pillow`.") from exc
+from avatar_image import inspect_gif, read_png
 
 
 STATES = ("idle", "peek", "loading", "coding", "error", "done")
@@ -26,11 +23,10 @@ def error(message: str) -> None:
 
 
 def validate_image_file(path: Path, label: str, expected_format: str) -> list[str]:
+    if expected_format != "PNG":
+        return [f"Invalid {label}: unsupported expected format {expected_format}"]
     try:
-        with Image.open(path) as image:
-            if image.format != expected_format:
-                return [f"Invalid {label}: expected {expected_format}, found {image.format or 'unknown'}"]
-            image.verify()
+        read_png(path)
     except Exception as exc:
         return [f"Invalid {label}: {exc}"]
     return []
@@ -46,21 +42,13 @@ def inspect_image_file(
     failures = validate_image_file(path, label, expected_format)
     if failures:
         return failures, None
-    with Image.open(path) as image:
-        return [], image.size
+    image = read_png(path)
+    return [], (image.width, image.height)
 
 
 def validate_gif(path: Path, state: str) -> tuple[list[str], tuple[int, int] | None]:
     try:
-        with Image.open(path) as image:
-            if image.format != "GIF":
-                return [
-                    f"Invalid GIF: {path.name} (expected GIF, found {image.format or 'unknown'})"
-                ], None
-            size = image.size
-            frame_count = getattr(image, "n_frames", 1)
-            for frame in ImageSequence.Iterator(image):
-                frame.copy()
+        size, frame_count = inspect_gif(path)
     except Exception as exc:
         return [f"Invalid GIF: {path.name} ({exc})"], None
 
